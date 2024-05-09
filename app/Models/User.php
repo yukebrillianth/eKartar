@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Support\Str;
 
 class User extends Authenticatable
 {
@@ -24,6 +25,21 @@ class User extends Authenticatable
         'phone',
         'password',
     ];
+
+    /**
+     * UUID
+     *
+     * @var string
+     */
+    protected $keyType = 'string';
+    public $incrementing = false;
+
+    public static function booted()
+    {
+        static::creating(function ($model) {
+            $model->id = Str::uuid();
+        });
+    }
 
     /**
      * The attributes that should be hidden for serialization.
