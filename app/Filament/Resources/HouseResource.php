@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\HouseResource\Pages;
 use App\Filament\Resources\HouseResource\RelationManagers;
+use App\Filament\Resources\HouseResource\Widgets\HouseOverview;
 use App\Models\House;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -34,7 +35,7 @@ class HouseResource extends Resource
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('holder')
-                    ->label('Kepala Rumah Tangga')
+                    ->label('Kepala Keluarga')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\Toggle::make('is_active')
@@ -53,7 +54,7 @@ class HouseResource extends Resource
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('holder')
-                    ->label('Kepala Rumah Tangga')
+                    ->label('Kepala Keluarga')
                     ->searchable(),
                 Tables\Columns\ToggleColumn::make('is_active')
                     ->sortable(),
@@ -75,6 +76,13 @@ class HouseResource extends Resource
                     Tables\Actions\RestoreBulkAction::make(),
                 ]),
             ]);
+    }
+
+    public static function getWidgets(): array
+    {
+        return [
+            HouseOverview::class,
+        ];
     }
 
     public static function getPages(): array
