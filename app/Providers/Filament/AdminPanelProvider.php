@@ -6,6 +6,7 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Pages;
+use Filament\Pages\Auth\Login;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -28,13 +29,16 @@ class AdminPanelProvider extends PanelProvider
             ->path('dashboard')
             ->login()
             ->colors([
-                'primary' => "#000000",
+                'primary' => Color::Amber,
             ])
             ->profile()
             ->spa()
             ->sidebarCollapsibleOnDesktop()
             ->breadcrumbs()
             ->brandName("eKartar")
+            ->brandLogo(asset('images/brand-light.png'))
+            ->darkModeBrandLogo(asset('images/brand-dark.png'))
+            ->brandLogoHeight('2rem')
             ->favicon(asset('images/logo.png'))
             ->plugins([
                 \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make()
@@ -62,6 +66,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->login(Login::class);
     }
 }
