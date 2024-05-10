@@ -75,7 +75,7 @@ class ContributionResource extends Resource
                     ->money('idr')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('withdrawls_count')
+                Tables\Columns\TextColumn::make('filled_withdrawls_count')
                     ->counts(['withdrawls' => fn (Builder $query) => $query->where('is_contribute', true)])
                     ->label('Rumah Terisi')
                     ->sortable(),
