@@ -8,6 +8,10 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class HouseOverview extends BaseWidget
 {
+    protected static ?string $pollingInterval = '5s';
+
+    protected static bool $isLazy = false;
+
     protected function getStats(): array
     {
         return [
