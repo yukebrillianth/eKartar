@@ -32,6 +32,35 @@ class Contribution extends Model
     protected $keyType = 'string';
     public $incrementing = false;
 
+    /**
+     * Holds the methods' names of Eloquent Relations 
+     * to fall on delete cascade or on restoring
+     * 
+     * @var array
+     */
+    protected static $relations_to_cascade = ['withdrawls'];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($resource) {
+            foreach (static::$relations_to_cascade as $relation) {
+                foreach ($resource->{$relation}()->get() as $item) {
+                    $item->delete();
+                }
+            }
+        });
+
+        static::restoring(function ($resource) {
+            foreach (static::$relations_to_cascade as $relation) {
+                foreach ($resource->{$relation}()->withTrashed()->get() as $item) {
+                    $item->restore();
+                }
+            }
+        });
+    }
+
     public static function booted()
     {
         static::creating(function ($model) {
