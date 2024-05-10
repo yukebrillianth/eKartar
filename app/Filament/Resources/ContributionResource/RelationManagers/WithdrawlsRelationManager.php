@@ -44,6 +44,8 @@ class WithdrawlsRelationManager extends RelationManager
                     })
                     ->getOptionLabelFromRecordUsing(fn (House $record) => "{$record->name} ({$record->holder})")
                     ->label('Rumah')
+                    ->searchable()
+                    ->preload()
                     ->required(),
                 Forms\Components\TextInput::make('value')
                     ->label('Jumlah')
