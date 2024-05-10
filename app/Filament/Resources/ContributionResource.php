@@ -50,6 +50,7 @@ class ContributionResource extends Resource
                         Forms\Components\FileUpload::make('image_path')
                             ->disk('r2')
                             ->image()
+                            ->optimize('jpg')
                             ->directory('contribution')
                             ->visibility('public')
                             ->visibleOn(['edit', 'view'])

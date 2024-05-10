@@ -11,6 +11,7 @@
         "filament/forms": "^3.2",
         "filament/tables": "^3.2",
         "filament/widgets": "^3.2",
+        "joshembling/image-optimizer": "^1.4",
         "laravel/framework": "^11.0",
         "laravel/tinker": "^2.9",
         "league/flysystem-aws-s3-v3": "^3.0"
