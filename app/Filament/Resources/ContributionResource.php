@@ -54,6 +54,9 @@ class ContributionResource extends Resource
                             ->visibility('public')
                             ->visibleOn(['edit', 'view'])
                             ->label('Gambar Proses Penghitungan')
+                            ->hidden(function (Contribution $record) {
+                                return !$record->is_calculation_complete;
+                            })
                     ])
             ]);
     }
@@ -83,6 +86,17 @@ class ContributionResource extends Resource
                 Tables\Columns\TextColumn::make('withdrawls_count')
                     ->counts(['withdrawls' => fn (Builder $query) => $query->where('is_contribute', true)])
                     ->label('Rumah Terisi')
+                    ->sortable(),
+                Tables\Columns\IconColumn::make('is_calculation_complete')
+                    ->label('Selesai')
+                    ->icon(fn (string $state): string => match ($state) {
+                        '1' => 'heroicon-o-check-circle',
+                        '' => 'heroicon-o-x-circle',
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        '1' => 'success',
+                        '' => 'danger',
+                    })
                     ->sortable(),
             ])
             ->filters([
