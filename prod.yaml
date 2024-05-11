@@ -15,20 +15,10 @@ services:
     build:
       context: .
       dockerfile_inline: |
-        FROM serversideup/php:beta-8.2-unit as base
-
-        ############################################
-        # Development Image
-        ############################################
-        FROM base as development
+        FROM serversideup/php:beta-8.2-unit
 
         # Switch to root so we can do root things
         USER root
-
-        # Use the build arguments to change the UID 
-        # and GID of www-data while also changing 
-        # the file permissions for NGINX
-        RUN docker-php-serversideup-set-id www-data ${UID}:${GID}
 
         RUN apt-get update && apt-get install -y \
           curl \
@@ -64,20 +54,10 @@ services:
     build:
       context: .
       dockerfile_inline: |
-        FROM serversideup/php:beta-8.2-cli as base
-
-        ############################################
-        # Development Image
-        ############################################
-        FROM base as development
+        FROM serversideup/php:beta-8.2-cli
 
         # Switch to root so we can do root things
         USER root
-
-        # Use the build arguments to change the UID 
-        # and GID of www-data while also changing 
-        # the file permissions for NGINX
-        RUN docker-php-serversideup-set-id www-data ${UID}:${GID}
 
         RUN apt-get update && apt-get install -y \
           curl \
@@ -113,20 +93,10 @@ services:
     build:
       context: .
       dockerfile_inline: |
-        FROM serversideup/php:beta-8.2-cli as base
-
-        ############################################
-        # Development Image
-        ############################################
-        FROM base as development
+        FROM serversideup/php:beta-8.2-cli
 
         # Switch to root so we can do root things
         USER root
-
-        # Use the build arguments to change the UID 
-        # and GID of www-data while also changing 
-        # the file permissions for NGINX
-        RUN docker-php-serversideup-set-id www-data ${UID}:${GID}
 
         RUN apt-get update && apt-get install -y \
           curl \
