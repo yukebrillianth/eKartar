@@ -57,6 +57,19 @@ return [
             'throw' => false,
         ],
 
+        'b2' => [
+            'driver' => 's3',
+            'key' => env('BACKBLAZE_B2_ACCESS_KEY_ID'),
+            'secret' => env('BACKBLAZE_B2_SECRET_ACCESS_KEY'),
+            'region' => 'us-east-1',
+            'bucket' => env('BACKBLAZE_B2_BUCKET'),
+            'url' => env('BACKBLAZE_B2_URL'),
+            'visibility' => 'private',
+            'endpoint' => env('BACKBLAZE_B2_ENDPOINT'),
+            'use_path_style_endpoint' => env('BACKBLAZE_B2_USE_PATH_STYLE_ENDPOINT', false),
+            'throw' => false,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

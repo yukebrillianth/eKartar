@@ -15,7 +15,9 @@
         "joshembling/image-optimizer": "^1.4",
         "laravel/framework": "^11.0",
         "laravel/tinker": "^2.9",
-        "league/flysystem-aws-s3-v3": "^3.0"
+        "league/flysystem-aws-s3-v3": "^3.0",
+        "mailersend/laravel-driver": "^2.5",
+        "spatie/laravel-backup": "^8.8"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
