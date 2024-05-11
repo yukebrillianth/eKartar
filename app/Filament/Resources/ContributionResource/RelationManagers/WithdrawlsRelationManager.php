@@ -103,7 +103,7 @@ class WithdrawlsRelationManager extends RelationManager
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('user.name')
-                    ->label('Pengambil')
+                    ->label('Diperiksa oleh')
                     ->searchable()
                     ->sortable(),
             ])
