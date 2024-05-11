@@ -35,6 +35,8 @@ services:
       - .env.prod
     depends_on:
       - postgres
+    ports:
+      - 3822:80
     networks:
       - eKartar
       - cloudflared #80
@@ -73,6 +75,8 @@ services:
     command: ["gosu", "www-data", "/usr/local/bin/php", "artisan", "horizon"]
     depends_on:
       - postgres
+    ports:
+      - 3823:80
     networks:
       - eKartar
 
