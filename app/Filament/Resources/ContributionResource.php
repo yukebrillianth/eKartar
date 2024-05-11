@@ -48,13 +48,12 @@ class ContributionResource extends Resource
                             ->label('Dilaksanakan Oleh')
                             ->required(),
                         Forms\Components\FileUpload::make('image_path')
-                            ->disk('r2')
                             ->image()
-                            ->optimize('jpg')
+                            ->disk('r2')
                             ->directory('contribution')
                             ->visibility('public')
                             ->visibleOn(['edit', 'view'])
-                            ->label('Gambar Proses Penghitungan'),
+                            ->label('Gambar Proses Penghitungan')
                     ])
             ]);
     }
