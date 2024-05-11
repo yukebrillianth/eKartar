@@ -17,36 +17,20 @@ services:
         USER root
         RUN apt-get update && apt-get install -y \
           curl \
-          postgresql-client \
-          php82-pdo \
-          php82-opcache \
-          php82-zip \
-          php82-phar \
-          php82-iconv \
-          php82-cli \
-          php82-curl \
-          php82-openssl \
-          php82-mbstring \
-          php82-tokenizer \
-          php82-fileinfo \
-          php82-json \
-          php82-xml \
-          php82-xmlwriter \
-          php82-simplexml \
-          php82-dom \
-          php82-pdo_pgsql \
-          php82-tokenizer \
-          php82-pecl-redis
+          postgresql-client
 
-         COPY . /var/www/html
+        RUN install-php-extensions gmp
+        RUN install-php-extensions intl
 
-         RUN composer install --no-interaction --prefer-dist --no-scripts \
-         && composer dump-autoload --optimize \
-         && chown -R www-data:www-data /var/www/html
+        COPY . /var/www/html
+
+        RUN composer install --no-interaction --prefer-dist --no-scripts \
+        && composer dump-autoload --optimize \
+        && chown -R www-data:www-data /var/www/html
          
-         RUN php artisan optimize
-         RUN php artisan config:cache
-         RUN php artisan route:cache
+        RUN php artisan optimize
+        RUN php artisan config:cache
+        RUN php artisan route:cache
     env_file:
       - .env.prod
     depends_on:
@@ -70,36 +54,20 @@ services:
         USER root
         RUN apt-get update && apt-get install -y \
           curl \
-          postgresql-client \
-          php82-pdo \
-          php82-opcache \
-          php82-zip \
-          php82-phar \
-          php82-iconv \
-          php82-cli \
-          php82-curl \
-          php82-openssl \
-          php82-mbstring \
-          php82-tokenizer \
-          php82-fileinfo \
-          php82-json \
-          php82-xml \
-          php82-xmlwriter \
-          php82-simplexml \
-          php82-dom \
-          php82-pdo_pgsql \
-          php82-tokenizer \
-          php82-pecl-redis
+          postgresql-client
 
-         COPY . /var/www/html
+        RUN install-php-extensions gmp
+        RUN install-php-extensions intl
 
-         RUN composer install --no-interaction --prefer-dist --no-scripts \
-         && composer dump-autoload --optimize \
-         && chown -R www-data:www-data /var/www/html
+        COPY . /var/www/html
+
+        RUN composer install --no-interaction --prefer-dist --no-scripts \
+        && composer dump-autoload --optimize \
+        && chown -R www-data:www-data /var/www/html
          
-         RUN php artisan optimize
-         RUN php artisan config:cache
-         RUN php artisan route:cache
+        RUN php artisan optimize
+        RUN php artisan config:cache
+        RUN php artisan route:cache
     command: ["gosu", "www-data", "/usr/local/bin/php", "artisan", "horizon"]
     depends_on:
       - postgres
@@ -121,36 +89,20 @@ services:
         USER root
         RUN apt-get update && apt-get install -y \
           curl \
-          postgresql-client \
-          php82-pdo \
-          php82-opcache \
-          php82-zip \
-          php82-phar \
-          php82-iconv \
-          php82-cli \
-          php82-curl \
-          php82-openssl \
-          php82-mbstring \
-          php82-tokenizer \
-          php82-fileinfo \
-          php82-json \
-          php82-xml \
-          php82-xmlwriter \
-          php82-simplexml \
-          php82-dom \
-          php82-pdo_pgsql \
-          php82-tokenizer \
-          php82-pecl-redis
+          postgresql-client
 
-         COPY . /var/www/html
+        RUN install-php-extensions gmp
+        RUN install-php-extensions intl
 
-         RUN composer install --no-interaction --prefer-dist --no-scripts \
-         && composer dump-autoload --optimize \
-         && chown -R www-data:www-data /var/www/html
+        COPY . /var/www/html
+
+        RUN composer install --no-interaction --prefer-dist --no-scripts \
+        && composer dump-autoload --optimize \
+        && chown -R www-data:www-data /var/www/html
          
-         RUN php artisan optimize
-         RUN php artisan config:cache
-         RUN php artisan route:cache
+        RUN php artisan optimize
+        RUN php artisan config:cache
+        RUN php artisan route:cache
     command:
       ["gosu", "www-data", "/usr/local/bin/php", "artisan", "schedule:work"]
 
