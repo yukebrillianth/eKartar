@@ -7,14 +7,15 @@ services:
     environment:
       AUTORUN_LARAVEL_STORAGE_LINK: false
       AUTORUN_LARAVEL_MIGRATION: true
+      AUTORUN_ENABLED: true
       SSL_MODE: "off"
+      PHP_OPCACHE_ENABLE: 1
 
     build:
       context: .
       dockerfile_inline: |
         FROM serversideup/php:beta-8.2-unit
 
-        USER root
         RUN apt-get update && apt-get install -y \
           curl \
           postgresql-client
@@ -35,8 +36,6 @@ services:
       - .env.prod
     depends_on:
       - postgres
-    ports:
-      - 3822:80
     networks:
       - eKartar
       - cloudflared #80
@@ -53,7 +52,6 @@ services:
       dockerfile_inline: |
         FROM serversideup/php:beta-8.2-cli
 
-        USER root
         RUN apt-get update && apt-get install -y \
           curl \
           postgresql-client
@@ -75,10 +73,9 @@ services:
     command: ["gosu", "www-data", "/usr/local/bin/php", "artisan", "horizon"]
     depends_on:
       - postgres
-    ports:
-      - 3823:80
     networks:
       - eKartar
+      - cloudflared
 
   scheduler:
     image: "${APP_NAME}-cli/app:beta-${APP_PHP_VERSION:-8.2}-cli"
@@ -92,7 +89,6 @@ services:
       dockerfile_inline: |
         FROM serversideup/php:beta-8.2-cli
 
-        USER root
         RUN apt-get update && apt-get install -y \
           curl \
           postgresql-client
