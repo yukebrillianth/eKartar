@@ -9,4 +9,4 @@ use Illuminate\Support\Facades\Route;
 Route::redirect('/', '/dashboard');
 
 // Fix no login route
-Route::redirect('/login-redirect', '/login')->name('login');
+Route::redirect('/login-redirect', '/dashboard/login')->name('login');
