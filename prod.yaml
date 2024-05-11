@@ -12,14 +12,12 @@ services:
     build:
       context: .
       dockerfile_inline: |
-        FROM webdevops/php-nginx:8.2-alpine
+        FROM serversideup/php:beta-8.2-unit
 
-        RUN apk add \
+        RUN whoami
+        RUN apt-get update && apt-get install -y \
           curl \
-          postgresql-client
-
-        RUN apk add --no-cache php82-common \
-          php82-fpm \
+          postgresql-client \
           php82-pdo \
           php82-opcache \
           php82-zip \
@@ -36,28 +34,19 @@ services:
           php82-xmlwriter \
           php82-simplexml \
           php82-dom \
-          php82-pdo_mysql \
-          php82-pdo_sqlite \
+          php82-pdo_pgsql \
           php82-tokenizer \
           php82-pecl-redis
 
-        ENV WEB_DOCUMENT_ROOT=/app/public
-        ENV PHP_DISMOD=bz2,calendar,exiif,ffi,intl,gettext,ldap,gmp,mysqli,imap,pdo_pgsql,pgsql,soap,sockets,sysvmsg,sysvsm,sysvshm,shmop,xsl,zip,gd,apcu,vips,yaml,imagick,mongodb,amqp
+         COPY . /var/www/html
 
-        RUN useradd -G www-data,root -u 9283 -d /home/ekartar ekartar
-        WORKDIR /app
-        COPY . .
-        USER ekartar
-        COPY composer.json composer.lock .
-        COPY ./.env.prod .env
-        RUN composer install --no-interaction --optimize-autoloader --no-dev
+         RUN composer install --no-interaction --prefer-dist --no-scripts \
+         && composer dump-autoload --optimize \
+         && chown -R www-data:www-data /var/www/html
 
         RUN php artisan optimize
         RUN php artisan config:cache
-        RUN php artisan config:cache
-        RUN php artisan horizon:publish
-        # Ensure all of our files are owned by the same user and group.
-        RUN chown -R application:application .
+        RUN php artisan route:cache
     env_file:
       - .env.prod
     depends_on:
@@ -118,7 +107,7 @@ services:
 
         RUN php artisan optimize
         RUN php artisan config:cache
-        RUN php artisan config:cache
+        RUN php artisan route:cache
         RUN php artisan horizon:publish
         # Ensure all of our files are owned by the same user and group.
         RUN chown -R application:application .
