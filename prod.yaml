@@ -10,30 +10,53 @@ services:
       AUTORUN_ENABLED: true
       SSL_MODE: "off"
       PHP_OPCACHE_ENABLE: 1
+      PHP_FPM_POOL_NAME: "ekartar_php"
 
     build:
       context: .
       dockerfile_inline: |
-        FROM serversideup/php:beta-8.2-unit
+        FROM serversideup/php:beta-8.2-unit as base
 
-        RUN apt-get install -y \
+        ############################################
+        # Development Image
+        ############################################
+        FROM base as development
+
+        # Switch to root so we can do root things
+        USER root
+
+        # Save the build arguments as a variable
+        ARG USER_ID
+        ARG GROUP_ID
+
+        # Use the build arguments to change the UID 
+        # and GID of www-data while also changing 
+        # the file permissions for NGINX
+        RUN docker-php-serversideup-set-id www-data $USER_ID:$GROUP_ID && \
+            \
+            # Update the file permissions for our NGINX service to match the new UID/GID
+            docker-php-serversideup-set-file-permissions --owner $USER_ID:$GROUP_ID --service nginx
+
+        RUN apt-get update && apt-get install -y \
           curl \
           postgresql-client
 
         RUN install-php-extensions gmp
         RUN install-php-extensions intl
 
-        COPY . /var/www/html
+        USER www-data
+
+        COPY --chown=www-data:www-data . /var/www/html
 
         RUN composer install --no-interaction --prefer-dist --no-scripts \
         && composer dump-autoload --optimize \
         && chown -R www-data:www-data /var/www/html
-         
-        RUN php artisan optimize
-        RUN php artisan config:cache
-        RUN php artisan route:cache
     env_file:
       - .env.prod
+    args:
+      # UID and GID must be set as environment variables on the host machine
+      USER_ID: ${UID}
+      GROUP_ID: ${GID}
     depends_on:
       - postgres
     networks:
@@ -43,33 +66,56 @@ services:
   horizon:
     image: "${APP_NAME}-cli/app:beta-${APP_PHP_VERSION:-8.2}-cli"
     pull_policy: build
+    environment:
+      PHP_FPM_POOL_NAME: "ekartar_horizon"
 
     env_file:
       - .env.prod
+    args:
+      # UID and GID must be set as environment variables on the host machine
+      USER_ID: ${UID}
+      GROUP_ID: ${GID}
 
     build:
       context: .
       dockerfile_inline: |
-        FROM serversideup/php:beta-8.2-cli
+        FROM serversideup/php:beta-8.2-cli as base
 
-        RUN apt-get install -y \
+        ############################################
+        # Development Image
+        ############################################
+        FROM base as development
+
+        # Switch to root so we can do root things
+        USER root
+
+        # Save the build arguments as a variable
+        ARG USER_ID
+        ARG GROUP_ID
+
+        # Use the build arguments to change the UID 
+        # and GID of www-data while also changing 
+        # the file permissions for NGINX
+        RUN docker-php-serversideup-set-id www-data $USER_ID:$GROUP_ID && \
+            \
+            # Update the file permissions for our NGINX service to match the new UID/GID
+            docker-php-serversideup-set-file-permissions --owner $USER_ID:$GROUP_ID --service nginx
+
+        RUN apt-get update && apt-get install -y \
           curl \
           postgresql-client
 
         RUN install-php-extensions gmp
         RUN install-php-extensions intl
-
         RUN docker-php-serversideup-dep-install-debian gosu
 
-        COPY . /var/www/html
+        USER www-data
+
+        COPY --chown=www-data:www-data . /var/www/html
 
         RUN composer install --no-interaction --prefer-dist --no-scripts \
         && composer dump-autoload --optimize \
         && chown -R www-data:www-data /var/www/html
-         
-        RUN php artisan optimize
-        RUN php artisan config:cache
-        RUN php artisan route:cache
     command: ["gosu", "www-data", "/usr/local/bin/php", "artisan", "horizon"]
     depends_on:
       - postgres
@@ -80,33 +126,55 @@ services:
   scheduler:
     image: "${APP_NAME}-cli/app:beta-${APP_PHP_VERSION:-8.2}-cli"
     pull_policy: build
+    environment:
+      PHP_FPM_POOL_NAME: "ekartar_task"
 
     env_file:
       - .env.prod
-
+    args:
+      # UID and GID must be set as environment variables on the host machine
+      USER_ID: ${UID}
+      GROUP_ID: ${GID}
     build:
       context: .
       dockerfile_inline: |
-        FROM serversideup/php:beta-8.2-cli
+        FROM serversideup/php:beta-8.2-cli as base
 
-        RUN apt-get install -y \
+        ############################################
+        # Development Image
+        ############################################
+        FROM base as development
+
+        # Switch to root so we can do root things
+        USER root
+
+        # Save the build arguments as a variable
+        ARG USER_ID
+        ARG GROUP_ID
+
+        # Use the build arguments to change the UID 
+        # and GID of www-data while also changing 
+        # the file permissions for NGINX
+        RUN docker-php-serversideup-set-id www-data $USER_ID:$GROUP_ID && \
+            \
+            # Update the file permissions for our NGINX service to match the new UID/GID
+            docker-php-serversideup-set-file-permissions --owner $USER_ID:$GROUP_ID --service nginx
+
+        RUN apt-get update && apt-get install -y \
           curl \
           postgresql-client
 
         RUN install-php-extensions gmp
         RUN install-php-extensions intl
-
         RUN docker-php-serversideup-dep-install-debian gosu
 
-        COPY . /var/www/html
+        USER www-data
+
+        COPY --chown=www-data:www-data . /var/www/html
 
         RUN composer install --no-interaction --prefer-dist --no-scripts \
         && composer dump-autoload --optimize \
         && chown -R www-data:www-data /var/www/html
-         
-        RUN php artisan optimize
-        RUN php artisan config:cache
-        RUN php artisan route:cache
     command:
       ["gosu", "www-data", "/usr/local/bin/php", "artisan", "schedule:work"]
 
