@@ -24,7 +24,7 @@ class HouseResource extends Resource
 
     protected static ?string $pluralModelLabel  = 'Semua Warga';
 
-    protected static ?string $navigationLabel = 'Warga';
+    protected static ?string $navigationLabel = 'Data Warga';
 
     public static function form(Form $form): Form
     {
