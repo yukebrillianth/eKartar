@@ -59,6 +59,8 @@ services:
         RUN install-php-extensions gmp
         RUN install-php-extensions intl
 
+        RUN docker-php-serversideup-dep-install-debian gosu
+
         COPY . /var/www/html
 
         RUN composer install --no-interaction --prefer-dist --no-scripts \
@@ -93,6 +95,8 @@ services:
 
         RUN install-php-extensions gmp
         RUN install-php-extensions intl
+
+        RUN docker-php-serversideup-dep-install-debian gosu
 
         COPY . /var/www/html
 
