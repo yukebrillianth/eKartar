@@ -20,10 +20,10 @@ class ContributionDetailOverview extends BaseWidget
         return [
             Stat::make('Total Saldo', 'Rp ' . number_format(Contribution::find($this->record->id)->withdrawls->sum('value'), 0, "", "."))
                 ->description('Saldo terkumpul'),
-            Stat::make('Total Rumah', Contribution::find($this->record->id)->withdrawls->count())
-                ->description('Rumah telah diperiksa'),
             Stat::make('Total Rumah Terisi', Contribution::find($this->record->id)->withdrawls->where('is_contribute', true)->count())
                 ->description('Rumah mengisi jimpitan'),
+            Stat::make('Total Rumah Kosong', Contribution::find($this->record->id)->withdrawls->where('is_contribute', false)->count())
+                ->description('Rumah tidak mengisi jimpitan'),
         ];
     }
 }
