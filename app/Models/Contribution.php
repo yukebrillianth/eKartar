@@ -2,16 +2,18 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class Contribution extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, HasUuids;
 
     /**
      * The attributes that are mass assignable.
@@ -68,6 +70,16 @@ class Contribution extends Model
         static::creating(function ($model) {
             $model->id = Str::uuid();
         });
+    }
+
+    // mark contribution as calculation complete
+    public function completeCalc()
+    {
+        if (!$this->is_calculation_complete) {
+            return $this->update([
+                'is_calculation_complete' => true
+            ]);
+        }
     }
 
     public function users(): BelongsToMany
