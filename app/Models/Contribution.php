@@ -21,7 +21,9 @@ class Contribution extends Model
     protected $fillable = [
         'date',
         'created_by',
-        'image_path'
+        'image_path',
+        'is_done',
+        'is_calculation_complete',
     ];
 
     /**
