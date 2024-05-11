@@ -14,9 +14,6 @@ services:
 
     build:
       context: .
-      args:
-        USER_ID: ${UID}
-        GROUP_ID: ${GID}
       dockerfile_inline: |
         FROM serversideup/php:beta-8.2-unit as base
 
@@ -28,13 +25,10 @@ services:
         # Switch to root so we can do root things
         USER root
 
-        ARG USER_ID
-        ARG GROUP_ID
-
         # Use the build arguments to change the UID 
         # and GID of www-data while also changing 
         # the file permissions for NGINX
-        RUN docker-php-serversideup-set-id www-data $USER_ID:$GROUP_ID
+        RUN docker-php-serversideup-set-id www-data ${UID}:${GID}
 
         RUN apt-get update && apt-get install -y \
           curl \
@@ -69,9 +63,6 @@ services:
 
     build:
       context: .
-      args:
-        USER_ID: ${UID}
-        GROUP_ID: ${GID}
       dockerfile_inline: |
         FROM serversideup/php:beta-8.2-cli as base
 
@@ -83,13 +74,10 @@ services:
         # Switch to root so we can do root things
         USER root
 
-        ARG USER_ID
-        ARG GROUP_ID
-
         # Use the build arguments to change the UID 
         # and GID of www-data while also changing 
         # the file permissions for NGINX
-        RUN docker-php-serversideup-set-id www-data $USER_ID:$GROUP_ID
+        RUN docker-php-serversideup-set-id www-data ${UID}:${GID}
 
         RUN apt-get update && apt-get install -y \
           curl \
@@ -124,9 +112,6 @@ services:
 
     build:
       context: .
-      args:
-        USER_ID: ${UID}
-        GROUP_ID: ${GID}
       dockerfile_inline: |
         FROM serversideup/php:beta-8.2-cli as base
 
@@ -138,13 +123,10 @@ services:
         # Switch to root so we can do root things
         USER root
 
-        ARG USER_ID
-        ARG GROUP_ID
-
         # Use the build arguments to change the UID 
         # and GID of www-data while also changing 
         # the file permissions for NGINX
-        RUN docker-php-serversideup-set-id www-data $USER_ID:$GROUP_ID
+        RUN docker-php-serversideup-set-id www-data ${UID}:${GID}
 
         RUN apt-get update && apt-get install -y \
           curl \
