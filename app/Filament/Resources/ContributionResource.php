@@ -61,6 +61,11 @@ class ContributionResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->description('Semua data jimpitan')
+            ->emptyStateDescription('Tambahkan jimpitan untuk memulai.')
+            ->poll('5s')
+            ->deferLoading()
+            ->striped()
             ->columns([
                 Tables\Columns\TextColumn::make('date')
                     ->label('Tanggal Jimpitan')
@@ -75,7 +80,7 @@ class ContributionResource extends Resource
                     ->money('idr')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('filled_withdrawls_count')
+                Tables\Columns\TextColumn::make('withdrawls_count')
                     ->counts(['withdrawls' => fn (Builder $query) => $query->where('is_contribute', true)])
                     ->label('Rumah Terisi')
                     ->sortable(),
