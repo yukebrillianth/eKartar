@@ -75,8 +75,12 @@ class WithdrawlsRelationManager extends RelationManager
     {
         return $table
             ->heading('Penarikan')
+            ->description('Data Penarikan jimpitan.')
+            ->emptyStateDescription('Tambahkan penarikan untuk memulai.')
             ->recordTitleAttribute('house.name')
             ->poll('5s')
+            ->deferLoading()
+            ->striped()
             ->columns([
                 Tables\Columns\TextColumn::make('house.name')
                     ->label('Rumah')
@@ -112,6 +116,7 @@ class WithdrawlsRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
+                    ->label('Tambahkan')
                     ->mutateFormDataUsing(function (array $data): array {
                         $data['user_id'] = auth()->id();
                         $data['contribution_id'] = $this->getOwnerRecord()->id;
