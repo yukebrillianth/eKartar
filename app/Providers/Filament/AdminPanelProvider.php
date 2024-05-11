@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Resources\ContributionResource\Widgets\ContributionOverview;
 use App\Filament\Resources\HouseResource\Widgets\HouseOverview;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -51,8 +52,9 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
-                HouseOverview::class,
+                // Widgets\FilamentInfoWidget::class,
+                // HouseOverview::class,
+                ContributionOverview::class
             ])
             ->middleware([
                 EncryptCookies::class,

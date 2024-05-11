@@ -2,8 +2,8 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "db:dev:rm": "docker-compose -H \"ssh://yukebrillianth@192.168.0.200\" rm -s -f -v",
-        "db:dev:up": "docker-compose -H \"ssh://yukebrillianth@192.168.0.200\" up -d",
+        "db:dev:rm": "docker-compose -H \"ssh://yukebrillianth@192.168.0.200\" rm db-dev -s -f -v",
+        "db:dev:up": "docker-compose -H \"ssh://yukebrillianth@192.168.0.200\" up db-dev -d",
         "db:dev:refresh": "npm run db:dev:rm && npm run db:dev:up",
         "dev": "vite",
         "build": "vite build"
