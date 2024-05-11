@@ -14,6 +14,9 @@ services:
 
     build:
       context: .
+      args:
+        USER_ID: ${UID}
+        GROUP_ID: ${GID}
       dockerfile_inline: |
         FROM serversideup/php:beta-8.2-unit as base
 
@@ -25,17 +28,13 @@ services:
         # Switch to root so we can do root things
         USER root
 
-        # Save the build arguments as a variable
         ARG USER_ID
         ARG GROUP_ID
 
         # Use the build arguments to change the UID 
         # and GID of www-data while also changing 
         # the file permissions for NGINX
-        RUN docker-php-serversideup-set-id www-data $USER_ID:$GROUP_ID && \
-            \
-            # Update the file permissions for our NGINX service to match the new UID/GID
-            docker-php-serversideup-set-file-permissions --owner $USER_ID:$GROUP_ID --service nginx
+        RUN docker-php-serversideup-set-id www-data $USER_ID:$GROUP_ID
 
         RUN apt-get update && apt-get install -y \
           curl \
@@ -53,10 +52,6 @@ services:
         && chown -R www-data:www-data /var/www/html
     env_file:
       - .env.prod
-    args:
-      # UID and GID must be set as environment variables on the host machine
-      USER_ID: ${UID}
-      GROUP_ID: ${GID}
     depends_on:
       - postgres
     networks:
@@ -71,13 +66,12 @@ services:
 
     env_file:
       - .env.prod
-    args:
-      # UID and GID must be set as environment variables on the host machine
-      USER_ID: ${UID}
-      GROUP_ID: ${GID}
 
     build:
       context: .
+      args:
+        USER_ID: ${UID}
+        GROUP_ID: ${GID}
       dockerfile_inline: |
         FROM serversideup/php:beta-8.2-cli as base
 
@@ -89,17 +83,13 @@ services:
         # Switch to root so we can do root things
         USER root
 
-        # Save the build arguments as a variable
         ARG USER_ID
         ARG GROUP_ID
 
         # Use the build arguments to change the UID 
         # and GID of www-data while also changing 
         # the file permissions for NGINX
-        RUN docker-php-serversideup-set-id www-data $USER_ID:$GROUP_ID && \
-            \
-            # Update the file permissions for our NGINX service to match the new UID/GID
-            docker-php-serversideup-set-file-permissions --owner $USER_ID:$GROUP_ID --service nginx
+        RUN docker-php-serversideup-set-id www-data $USER_ID:$GROUP_ID
 
         RUN apt-get update && apt-get install -y \
           curl \
@@ -131,12 +121,12 @@ services:
 
     env_file:
       - .env.prod
-    args:
-      # UID and GID must be set as environment variables on the host machine
-      USER_ID: ${UID}
-      GROUP_ID: ${GID}
+
     build:
       context: .
+      args:
+        USER_ID: ${UID}
+        GROUP_ID: ${GID}
       dockerfile_inline: |
         FROM serversideup/php:beta-8.2-cli as base
 
@@ -148,17 +138,13 @@ services:
         # Switch to root so we can do root things
         USER root
 
-        # Save the build arguments as a variable
         ARG USER_ID
         ARG GROUP_ID
 
         # Use the build arguments to change the UID 
         # and GID of www-data while also changing 
         # the file permissions for NGINX
-        RUN docker-php-serversideup-set-id www-data $USER_ID:$GROUP_ID && \
-            \
-            # Update the file permissions for our NGINX service to match the new UID/GID
-            docker-php-serversideup-set-file-permissions --owner $USER_ID:$GROUP_ID --service nginx
+        RUN docker-php-serversideup-set-id www-data $USER_ID:$GROUP_ID
 
         RUN apt-get update && apt-get install -y \
           curl \
