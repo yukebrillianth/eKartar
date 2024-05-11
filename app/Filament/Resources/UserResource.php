@@ -38,11 +38,21 @@ class UserResource extends Resource
                     ->maxLength(255),
                 Forms\Components\TextInput::make('password')
                     ->password()
-                    ->required()
+                    ->required(fn (string $context): bool => $context === 'create')
+                    ->dehydrated(fn ($state) => filled($state))
                     ->maxLength(255),
                 Forms\Components\Select::make('role')
+                    ->multiple()
+                    ->preload()
+                    ->relationship('roles', 'name', function (Builder $query) {
+                        $isSuperAdmin = collect(auth()->user()->roles->toArray())->contains('name', 'super_admin');
+                        if ($isSuperAdmin) {
+                            return $query;
+                        } else {
+                            return $query->where('name', '!=', 'super_admin');
+                        }
+                    })
                     ->required()
-                    ->relationship('roles', 'name')
             ]);
     }
 
