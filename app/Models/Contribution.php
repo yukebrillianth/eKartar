@@ -94,6 +94,11 @@ class Contribution extends Model
      */
     public function withdrawls(): HasMany
     {
-        return $this->hasMany(Withdrawl::class);
+        return $this->hasMany(Withdrawl::class)->withTrashed();
+    }
+
+    public function withdrawlsWithoutTrashed(): HasMany
+    {
+        return $this->hasMany(Withdrawl::class)->withTrashed();
     }
 }
