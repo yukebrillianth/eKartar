@@ -93,7 +93,6 @@ return [
             'search_path' => 'public',
             'sslmode' => 'prefer',
             'dump' => [
-                'dump_binary_path' => 'C:\laragon\bin\postgresql\postgresql-14.5-1\bin',
                 'use_single_transaction',
             ]
         ],
