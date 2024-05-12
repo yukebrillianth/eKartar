@@ -42,7 +42,7 @@ class Contribution extends Model
      * 
      * @var array
      */
-    protected static $relations_to_cascade = ['withdrawls'];
+    protected static $relations_to_cascade = [];
 
     protected static function boot()
     {
@@ -82,6 +82,16 @@ class Contribution extends Model
         }
     }
 
+    // mark contribution as calculation complete
+    public function cancelCalc()
+    {
+        if ($this->is_calculation_complete) {
+            return $this->update([
+                'is_calculation_complete' => false
+            ]);
+        }
+    }
+
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class);
@@ -94,11 +104,6 @@ class Contribution extends Model
      */
     public function withdrawls(): HasMany
     {
-        return $this->hasMany(Withdrawl::class)->withTrashed();
-    }
-
-    public function withdrawlsWithoutTrashed(): HasMany
-    {
-        return $this->hasMany(Withdrawl::class)->withTrashed();
+        return $this->hasMany(Withdrawl::class);
     }
 }
