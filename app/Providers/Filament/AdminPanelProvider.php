@@ -74,6 +74,8 @@ class AdminPanelProvider extends PanelProvider
                 'Data Warga',
                 'User Management'
             ])
-            ->login(Login::class);
+            ->login(Login::class)
+            ->unsavedChangesAlerts()
+            ->databaseTransactions();
     }
 }
