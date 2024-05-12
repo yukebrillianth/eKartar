@@ -10,4 +10,3 @@ Artisan::command('inspire', function () {
 
 Schedule::command('backup:run')->twiceDaily(1, 12);
 Schedule::command('backup:monitor')->everySixHours();
-Schedule::command('backup:run')->everyMinute();
