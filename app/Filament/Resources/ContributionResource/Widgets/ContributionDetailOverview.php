@@ -18,11 +18,11 @@ class ContributionDetailOverview extends BaseWidget
     protected function getStats(): array
     {
         return [
-            Stat::make('Total Saldo', 'Rp ' . number_format(Contribution::find($this->record->id)->withdrawls->sum('value'), 0, "", "."))
+            Stat::make('Total Saldo', 'Rp ' . number_format(Contribution::withTrashed()->with('withdrawls')->find($this->record->id)->withdrawls->sum('value'), 0, "", "."))
                 ->description('Saldo terkumpul'),
-            Stat::make('Total Rumah Terisi', Contribution::find($this->record->id)->withdrawls->where('is_contribute', true)->count())
+            Stat::make('Total Rumah Terisi', Contribution::withTrashed()->find($this->record->id)->withdrawls->where('is_contribute', true)->count())
                 ->description('Rumah mengisi jimpitan'),
-            Stat::make('Total Rumah Kosong', Contribution::find($this->record->id)->withdrawls->where('is_contribute', false)->count())
+            Stat::make('Total Rumah Kosong', Contribution::withTrashed()->find($this->record->id)->withdrawls->where('is_contribute', false)->count())
                 ->description('Rumah tidak mengisi jimpitan'),
         ];
     }
