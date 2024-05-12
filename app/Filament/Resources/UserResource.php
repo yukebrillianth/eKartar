@@ -45,7 +45,6 @@ class UserResource extends Resource
                     ->dehydrated(fn ($state) => filled($state))
                     ->maxLength(255),
                 Forms\Components\Select::make('role')
-                    ->multiple()
                     ->preload()
                     ->relationship('roles', 'name', function (Builder $query) {
                         $isSuperAdmin = collect(auth()->user()->roles->toArray())->contains('name', 'super_admin');
@@ -55,6 +54,7 @@ class UserResource extends Resource
                             return $query->where('name', '!=', 'super_admin');
                         }
                     })
+                    ->searchable()
                     ->required()
             ]);
     }
