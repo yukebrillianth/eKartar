@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ContributionResource\Pages;
 
+use App\Exports\WithdrawlsExport;
 use App\Filament\Resources\ContributionResource;
 use App\Filament\Resources\ContributionResource\Widgets\ContributionDetailOverview;
 use App\Models\Contribution;
@@ -10,7 +11,7 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Enums\IconPosition;
-use Illuminate\Database\Eloquent\Model;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ViewContribution extends ViewRecord
 {
@@ -74,7 +75,12 @@ class ViewContribution extends ViewRecord
                     ->color('info')
                     ->hidden(function (Contribution $record) {
                         return !$record->withdrawls->count() || $record->is_anounced ||  !$record->is_calculation_complete;
-                    })
+                    }),
+                Action::make('export')
+                    ->color('gray')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->label('Export Jimpitan')
+                    ->action(fn () => Excel::download(new WithdrawlsExport($this->getRecord()->id), "eKartar-jimpitan-{$this->getRecord()->date}.xlsx")),
             ])->label('Lainnya')
                 ->icon('heroicon-m-ellipsis-vertical')
                 ->iconPosition(IconPosition::After)
