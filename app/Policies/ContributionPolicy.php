@@ -42,14 +42,10 @@ class ContributionPolicy
         $isKartar = collect($user->roles->toArray())->contains('name', 'karang_taruna');
         $containUser = collect($contribution->users->toArray())->contains('id', $user->id);
 
-        if (!$contribution->is_calculation_complete) {
-            if ($isKartar) {
-                return $user->can('update_contribution') && $containUser;
-            } else {
-                return $user->can('update_contribution');
-            }
+        if ($isKartar) {
+            return $user->can('update_contribution') && $containUser;
         } else {
-            return false;
+            return $user->can('update_contribution');
         }
     }
 

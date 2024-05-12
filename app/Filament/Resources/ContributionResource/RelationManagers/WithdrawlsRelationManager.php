@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ContributionResource\RelationManagers;
 
+use App\Models\Contribution;
 use App\Models\House;
 use Carbon\Carbon;
 use Filament\Forms;
@@ -121,6 +122,7 @@ class WithdrawlsRelationManager extends RelationManager
             ->headerActions([
                 Tables\Actions\CreateAction::make()
                     ->label('Tambahkan')
+                    ->authorize(!$this->getOwnerRecord()->is_calculation_complete)
                     ->mutateFormDataUsing(function (array $data): array {
                         $data['user_id'] = auth()->id();
                         $data['contribution_id'] = $this->getOwnerRecord()->id;
