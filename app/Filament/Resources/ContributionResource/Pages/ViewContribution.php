@@ -80,6 +80,7 @@ class ViewContribution extends ViewRecord
                 ->iconPosition(IconPosition::After)
                 ->color('gray')
                 ->button()
+                ->authorize(auth()->user()->roles[0]->name !== 'karang_taruna')
         ];
     }
 
