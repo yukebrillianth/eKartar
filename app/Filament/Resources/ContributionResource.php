@@ -54,9 +54,10 @@ class ContributionResource extends Resource
                             ->visibility('public')
                             ->visibleOn(['edit', 'view'])
                             ->label('Gambar Proses Penghitungan')
-                            ->hidden(function (Contribution $record) {
-                                return !$record->is_calculation_complete;
-                            })
+                            ->hidden(
+                                fn (string $context, ?Contribution $record) =>
+                                $context !== 'create' && !$record->is_calculation_complete
+                            )
                     ])
             ]);
     }
