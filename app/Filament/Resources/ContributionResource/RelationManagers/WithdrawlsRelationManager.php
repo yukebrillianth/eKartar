@@ -8,6 +8,7 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Support\RawJs;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -31,42 +32,44 @@ class WithdrawlsRelationManager extends RelationManager
                 //     ->readonly()
                 //     ->required(),
                 Forms\Components\Select::make('house_id')
-                    ->relationship('house', 'name', function (Builder $query) use ($contributionId) {
-                        $query->where('is_active', true)
-                            ->whereNotExists(function ($subQuery) use ($contributionId) {
-                                $subQuery->select('house_id')
-                                    ->from('withdrawls')
-                                    ->whereColumn('withdrawls.house_id', 'houses.id')
-                                    ->where('withdrawls.contribution_id', $contributionId)
-                                    ->where('withdrawls.deleted_at', null);
-                            })
-                            ->orderBy('name', 'ASC');
+                    ->label('Rumah')
+                    ->relationship('house', 'name', function (Builder $query, string $operation) use ($contributionId) {
+                        if ($operation === 'create') {
+                            $query->where('is_active', true)
+                                ->whereDoesntHave('withdrawls', function ($subQuery) use ($contributionId) {
+                                    $subQuery->where('contribution_id', $contributionId)
+                                        ->whereNull('deleted_at');
+                                })
+                                ->orderBy('name', 'ASC');
+                        } else {
+                            $query;
+                        }
                     })
                     ->getOptionLabelFromRecordUsing(fn (House $record) => "{$record->name} ({$record->holder})")
-                    ->label('Rumah')
                     ->searchable()
                     ->preload()
                     ->required(),
                 Forms\Components\TextInput::make('value')
                     ->label('Jumlah')
-                    ->required()
+                    // ->required()
                     ->prefix('Rp')
-                    ->default(0)
+                    ->mask(RawJs::make('$money($input, \',\')'))
+                    ->stripCharacters('.')
                     ->numeric()
-                    ->live()
-                    ->afterStateUpdated(function ($state, Set $set, string $operation) {
-                        if (blank($state)) return;
-                        if ($operation === 'create') {
-                            $set('is_contribute', true);
-                        }
-                    }),
-                Forms\Components\Toggle::make('is_contribute')
-                    ->label('Mengisi atau tidak?')
-                    ->live()
-                    ->afterStateUpdated(function ($state, Set $set, string $operation) {
-                        if (blank($state)) return;
-                        $set('value', 0);
-                    }),
+                // ->live()
+                // ->afterStateUpdated(function ($state, Set $set, string $operation) {
+                //     if (blank($state)) return;
+                //     if ($operation === 'create') {
+                //         $set('is_contribute', true);
+                //     }
+                // }),
+                // Forms\Components\Toggle::make('is_contribute')
+                //     ->label('Mengisi atau tidak?')
+                //     ->live()
+                //     ->afterStateUpdated(function ($state, Set $set, string $operation) {
+                //         if (blank($state)) return;
+                //         $set('value', 0);
+                //     }),
 
             ]);
     }
@@ -123,6 +126,7 @@ class WithdrawlsRelationManager extends RelationManager
                         if ($data['value']) {
                             $data['is_contribute'] = true;
                         } else {
+                            $data['value'] = 0;
                             $data['is_contribute'] = false;
                         }
 
