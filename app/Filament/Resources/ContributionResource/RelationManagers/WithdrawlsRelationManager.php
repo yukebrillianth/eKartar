@@ -114,6 +114,7 @@ class WithdrawlsRelationManager extends RelationManager
                     ->searchable()
                     ->sortable(),
             ])
+            ->defaultSort('house.name', 'asc')
             ->filters([
                 Tables\Filters\TrashedFilter::make()
             ])
