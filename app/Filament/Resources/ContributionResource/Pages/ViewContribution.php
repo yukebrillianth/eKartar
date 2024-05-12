@@ -24,26 +24,49 @@ class ViewContribution extends ViewRecord
                 ->label('Ubah data'),
             ActionGroup::make([
                 Action::make('finish')
-                    ->label(function (Contribution $record) {
-                        if ($record->is_calculation_complete) {
-                            return 'Penarikan Diselesaikan';
-                        } else {
-                            return 'Selesaikan';
-                        }
-                    })
-                    ->icon(function (Contribution $record) {
-                        if ($record->is_calculation_complete) {
-                            return 'heroicon-o-check-badge';
-                        }
-                    })
+                    // ->label(function (Contribution $record) {
+                    //     if ($record->is_calculation_complete) {
+                    //         return 'Penarikan Diselesaikan';
+                    //     } else {
+                    //         return 'Selesaikan';
+                    //     }
+                    // })
+                    ->label('Selesaikan')
+                    // ->icon(function (Contribution $record) {
+                    //     if ($record->is_calculation_complete) {
+                    //         return 'heroicon-o-check-badge';
+                    //     }
+                    // })
+                    ->icon('heroicon-o-check-badge')
                     // ->button()
                     ->action(fn (Contribution $record) => $record->completeCalc())
                     ->color('success')
                     ->hidden(function (Contribution $record) {
-                        return !$record->withdrawls->count();
-                    })
-                    ->disabled(function (Contribution $record) {
-                        return $record->is_calculation_complete;
+                        return !$record->withdrawls->count() || $record->is_calculation_complete;
+                    }),
+                // ->disabled(function (Contribution $record) {
+                //     return $record->is_calculation_complete;
+                // }),
+                Action::make('cancel')
+                    // ->label(function (Contribution $record) {
+                    //     if ($record->is_calculation_complete) {
+                    //         return 'Penarikan Diselesaikan';
+                    //     } else {
+                    //         return 'Selesaikan';
+                    //     }
+                    // })
+                    ->label('Batalkan')
+                    // ->icon(function (Contribution $record) {
+                    //     if ($record->is_calculation_complete) {
+                    //         return 'heroicon-o-check-badge';
+                    //     }
+                    // })
+                    ->icon('heroicon-o-x-mark')
+                    // ->button()
+                    ->action(fn (Contribution $record) => $record->cancelCalc())
+                    ->color('danger')
+                    ->hidden(function (Contribution $record) {
+                        return !$record->withdrawls->count() || !$record->is_calculation_complete;
                     }),
                 Action::make('Umumkan')
                     ->icon('heroicon-o-paper-airplane')
