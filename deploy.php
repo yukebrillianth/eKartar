@@ -16,18 +16,7 @@ set('keep_releases', 5);
 
 add('shared_files', ['.env']);
 add('shared_dirs', ['storage']);
-add('writable_dirs', [
-    'bootstrap/cache',
-    'storage',
-    'storage/app',
-    'storage/app/public',
-    'storage/framework',
-    'storage/framework/cache',
-    'storage/framework/cache/data',
-    'storage/framework/sessions',
-    'storage/framework/views',
-    'storage/logs',
-]);
+add('writable_dirs', []);
 
 set('composer_options', '--verbose --prefer-dist --no-progress --no-interaction --no-dev --optimize-autoloader');
 
@@ -56,6 +45,8 @@ task('icon:cache', artisan('icons:cache'));
 
 task('deploy', [
     'deploy:prepare',
+    'deploy:lock',
+    'deploy:release',
     'deploy:secrets',       // Deploy secrets
     'deploy:vendors',
     'deploy:shared',
