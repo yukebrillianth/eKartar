@@ -80,7 +80,8 @@ class ViewContribution extends ViewRecord
                     ->color('info')
                     ->hidden(function (Contribution $record) {
                         return !$record->withdrawls->count() || $record->is_anounced ||  !$record->is_calculation_complete;
-                    }),
+                    })
+                    ->authorize(auth()->user()->roles[0]->name !== 'karang_taruna' && count(auth()->user()->roles->toArray()) === 1),
                 Action::make('export')
                     ->color('gray')
                     ->icon('heroicon-o-arrow-down-tray')
@@ -102,13 +103,16 @@ class ViewContribution extends ViewRecord
                             ->password()
                             ->revealable()
                     ])
+                    ->hidden(function (Contribution $record) {
+                        return !$record->withdrawls->count() || $record->is_anounced ||  !$record->is_calculation_complete;
+                    })
+                    ->authorize(auth()->user()->roles[0]->name !== 'karang_taruna' && count(auth()->user()->roles->toArray()) === 1)
                     ->action(fn (array $data) => Excel::download(new WithdrawlsExport($this->getRecord()->id, $this->getRecord()->date, $data['encrypt'], $data['password'] ?? null), "eKartar-jimpitan-{$this->getRecord()->date}.xlsx")),
             ])->label('Lainnya')
                 ->icon('heroicon-m-ellipsis-vertical')
                 ->iconPosition(IconPosition::After)
                 ->color('gray')
                 ->button()
-                ->authorize(auth()->user()->roles[0]->name !== 'karang_taruna' && count(auth()->user()->roles->toArray()) === 1)
         ];
     }
 
