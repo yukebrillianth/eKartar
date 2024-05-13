@@ -52,7 +52,7 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
           ssh-known-hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
-      - name: Deploy to Development
+      - name: Deploy to Production
         env:
           DOT_ENV: ${{ secrets.DOT_ENV_PRODUCTION }}
         run: php vendor/bin/dep deploy production branch=main
