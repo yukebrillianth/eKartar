@@ -54,6 +54,7 @@ task('deploy:build', [
     'npm:install',
 ]);
 
+desc('Icons cache');
 task('icon:cache', [
     '{{bin/php}} artisan icons:cache',
 ]);
