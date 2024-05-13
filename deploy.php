@@ -38,7 +38,7 @@ host('production')
     ->set('remote_user', 'yukebrillianth')
     ->set('port', 64000)
     ->set('branch', 'main')
-    ->set('deploy_path', '~/eKartar');
+    ->set('deploy_path', '~/ekartar');
 
 // Hooks
 
@@ -63,21 +63,20 @@ task('deploy', [
     'deploy:shared',
     'deploy:build',
     'artisan:storage:link',
-    // 'icons:cache',
+    'icons:cache',
     'artisan:view:cache',
     'artisan:config:cache',
     'artisan:route:cache',
     'artisan:event:cache',
     'artisan:optimize',
     'deploy:publish',
-    'deploy:unlock',
 ]);
 
 // [Optional] if deploy fails automatically unlock.
 after('deploy:failed', 'deploy:unlock');
 
 // Migrate database before symlink new release. Uncomment below code if you want to migrate after deploy
-before('deploy:symlink', 'artisan:migrate');
+// before('deploy:symlink', 'artisan:migrate');
 after('deploy:cleanup', 'artisan:cache:clear');
 after('deploy:cleanup', 'artisan:optimize');
 // handle queue restarts
