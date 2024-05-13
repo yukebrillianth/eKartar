@@ -47,10 +47,6 @@ task('deploy:build', [
     'npm:install',
 ]);
 
-task('icons:cache', [
-    run('{{bin/php}} artisan icons:cache'),
-]);
-
 task('deploy', [
     'deploy:prepare',
     'deploy:secrets',       // Deploy secrets
@@ -58,14 +54,17 @@ task('deploy', [
     'deploy:shared',
     'artisan:storage:link',
     'artisan:queue:restart',
-    'deploy:publish',
-    'deploy:unlock',
-    'icons:cache',
     'artisan:view:cache',
     'artisan:config:cache',
     'artisan:route:cache',
     'artisan:event:cache',
-    'artisan:optimize'
+    'artisan:optimize',
+    'deploy:publish',
+    'deploy:unlock',
+]);
+
+task('icons:cache', [
+    run('{{bin/php}} artisan icons:cache'),
 ]);
 
 // [Optional] if deploy fails automatically unlock.
