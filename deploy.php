@@ -47,10 +47,6 @@ task('deploy:build', [
     'npm:install',
 ]);
 
-task('artisan:optimize', [
-    run('{{bin/php}} artisan optimize'),
-]);
-
 task('icons:cache', [
     run('{{bin/php}} artisan icons:cache'),
 ]);
@@ -78,3 +74,6 @@ after('deploy:failed', 'deploy:unlock');
 // Migrate database before symlink new release. Uncomment below code if you want to migrate after deploy
 
 before('deploy:symlink', 'artisan:migrate');
+after('deploy:cleanup', 'artisan:cache:clear');
+after('deploy:cleanup', 'artisan:optimize');
+// handle queue restarts

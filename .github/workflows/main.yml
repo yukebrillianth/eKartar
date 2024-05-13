@@ -10,8 +10,16 @@ jobs:
     if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v1
+      - name: Setup PHP
+        uses: shivammathur/setup-php@main
+        with:
+          php-version: '8.3'
+          extension-csv: mbstring, bcmath
+      - name: Composer install
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
       - name: NPM Build
         run: |
+          composer install
           npm install
           npm run build
       - name: Put built assets in Artifacts
@@ -37,8 +45,6 @@ jobs:
         with:
           php-version: '8.3'
           extension-csv: mbstring, bcmath
-      - name: Composer install
-        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
       - name: Setup Deployer
         uses: atymic/deployer-php-action@main
         with:
