@@ -63,8 +63,8 @@ task('deploy', [
     'icons:cache',
     'artisan:view:cache',
     'artisan:config:cache',
-    'artisan:routes:cache',
-    'artisan:events:cache',
+    'artisan:route:cache',
+    'artisan:event:cache',
     'artisan:optimize'
 ]);
 
