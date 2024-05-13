@@ -14,6 +14,8 @@ set('application', 'eKartar');
 set('repository', 'https://github.com/yukebrillianth/eKartar.git');
 set('keep_releases', 5);
 
+set('writable_mode', 'chmod');
+
 add('shared_files', ['.env']);
 add('shared_dirs', ['storage']);
 add('writable_dirs', [
@@ -63,7 +65,7 @@ task('deploy', [
     'deploy:shared',
     'deploy:build',
     'artisan:storage:link',
-    'icons:cache',
+    'icon:cache',
     'artisan:view:cache',
     'artisan:config:cache',
     'artisan:route:cache',
