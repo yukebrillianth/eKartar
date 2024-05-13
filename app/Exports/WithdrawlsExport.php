@@ -3,10 +3,10 @@
 namespace App\Exports;
 
 use App\Models\Withdrawl;
+use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
-use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -28,35 +28,62 @@ class WithdrawlsExport implements WithMapping, WithHeadings, WithStyles, ShouldA
     use Exportable;
 
     protected string $id;
+    protected string $date;
+    protected bool $encrypt;
+    protected string $password;
 
-    public function __construct(string $id)
+    public function __construct(string $id, string $date, bool $encrypt, string $password = null)
     {
         $this->id = $id;
+        $this->date = $date;
+        $this->encrypt = $encrypt;
+        if ($encrypt) {
+            $this->password = $password;
+        }
     }
 
     public function query()
     {
-        return Withdrawl::with(['contribution', 'house', 'user'])->where('contribution_id', $this->id);
+        return Withdrawl::with(['contribution', 'house', 'user'])->join('houses', 'withdrawls.house_id', '=', 'houses.id')->where('contribution_id', $this->id)->orderBy('houses.name', 'ASC');
     }
 
     public function map($withdrawl): array
     {
         return [
-            $withdrawl->house->name,
-            $withdrawl->is_contribute === true ? 'Mengisi' : 'Kosong',
-            $withdrawl->value,
-            $withdrawl->user->name
+            [
+                $withdrawl->house->name,
+                $withdrawl->is_contribute === true ? 'Mengisi' : 'Kosong',
+                $withdrawl->value,
+                $withdrawl->user->name
+            ],
+
         ];
     }
 
     public function headings(): array
     {
-        return [
+        $headers1 = ["LAPORAN PENGAMBILAN JIMPITAN"];
+        $headers2 = ["eKartar 2024 © yukebrillianth.my.id"];
+        $headers3 = [Carbon::parse($this->date)->isoFormat('dddd, D MMMM Y')];
+        $headers4 = [
+            'Saldo',
+            $this->query()->sum('value')
+        ];
+        $headers5 = [
+            'Rumah Terisi',
+            $this->query()->where('is_contribute', true)->count()
+        ];
+        $headers6 = [
+            'Rumah Kosong',
+            $this->query()->where('is_contribute', false)->count()
+        ];
+        $headers7 = [
             'RUMAH',
             'STATUS',
             'JUMLAH',
             'DIPERIKSA OLEH',
         ];
+        return [$headers1, $headers2, $headers3, [""], $headers4, $headers5, $headers6, [""], $headers7];
     }
 
     public function columnWidths(): array
@@ -81,7 +108,7 @@ class WithdrawlsExport implements WithMapping, WithHeadings, WithStyles, ShouldA
                     $greenStyle->getFill()->setFillType(Fill::FILL_SOLID)->getEndColor()->setARGB("FFC6EfCE");
                     $greenStyle->getFont()->getColor()->setARGB("FF006100");
 
-                    $cellRange = 'B2:B' . strval($count + 1);
+                    $cellRange = 'B10:B' . strval($count + 9);
                     $conditionalStyles = [];
                     $wizardFactory = new Wizard($cellRange);
                     /** @var Wizard\CellValue $cellWizard */
@@ -112,8 +139,35 @@ class WithdrawlsExport implements WithMapping, WithHeadings, WithStyles, ShouldA
 
         $sheet->getStyle('1')->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
         $sheet->getStyle('1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $sheet->getStyle('1')->getFont()->setBold(true);
+        $sheet->getStyle('5')->getFont()->setBold(true);
+        $sheet->getStyle('6')->getFont()->setBold(true);
+        $sheet->getStyle('7')->getFont()->setBold(true);
+        $sheet->getStyle('2')->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+        $sheet->getStyle('2')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $sheet->getStyle('3')->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+        $sheet->getStyle('3')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $sheet->getStyle('5')->getAlignment()->setHorizontal(Alignment::VERTICAL_CENTER);
+        $sheet->getStyle('5')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $sheet->getStyle('6')->getAlignment()->setHorizontal(Alignment::VERTICAL_CENTER);
+        $sheet->getStyle('6')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $sheet->getStyle('7')->getAlignment()->setHorizontal(Alignment::VERTICAL_CENTER);
+        $sheet->getStyle('7')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $sheet->getStyle('8')->getAlignment()->setHorizontal(Alignment::VERTICAL_CENTER);
+        $sheet->getStyle('8')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $sheet->getStyle('9')->getAlignment()->setHorizontal(Alignment::VERTICAL_CENTER);
+        $sheet->getStyle('9')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
         $sheet->getStyle('B')->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
         $sheet->getStyle('B')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
         $sheet->getStyle('C2:C100')->getNumberFormat()->setFormatCode($accounting);
+        $sheet->getStyle('B5')->getNumberFormat()->setFormatCode($accounting);
+        $sheet->mergeCells('A1:D1');
+        $sheet->mergeCells('A2:D2');
+        $sheet->mergeCells('A3:D3');
+
+        if ($this->encrypt) {
+            $sheet->getProtection()->setPassword($this->password);
+            $sheet->getProtection()->setSheet(true);
+        }
     }
 }
