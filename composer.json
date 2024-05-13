@@ -7,7 +7,6 @@
     "require": {
         "php": "^8.2",
         "bezhansalleh/filament-shield": "^3.2",
-        "deployer/deployer": "^7.4",
         "filament/actions": "^3.2",
         "filament/filament": "^3.2",
         "filament/forms": "^3.2",
@@ -25,6 +24,7 @@
         "spatie/laravel-backup": "^8.8"
     },
     "require-dev": {
+        "deployer/deployer": "^7.4",
         "fakerphp/faker": "^1.23",
         "laravel/pint": "^1.13",
         "laravel/sail": "^1.26",
