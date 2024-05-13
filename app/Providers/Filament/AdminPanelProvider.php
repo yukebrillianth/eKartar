@@ -76,6 +76,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->login(Login::class)
             ->unsavedChangesAlerts()
+            ->databaseNotifications()
             ->databaseTransactions();
     }
 }
