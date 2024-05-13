@@ -45,6 +45,8 @@ jobs:
         with:
           php-version: '8.3'
           extension-csv: mbstring, bcmath
+      - name: Composer install
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
       - name: Setup Deployer
         uses: atymic/deployer-php-action@master
         with:
