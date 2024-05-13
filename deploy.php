@@ -3,7 +3,6 @@
 namespace Deployer;
 
 require 'recipe/laravel.php';
-require 'contrib/php-fpm.php';
 require 'contrib/npm.php';
 
 // Config
@@ -70,7 +69,6 @@ task('deploy', [
     'artisan:route:cache',
     'artisan:event:cache',
     'artisan:optimize',
-    'php-fpm:reload',
     'deploy:publish',
     'deploy:unlock',
 ]);
