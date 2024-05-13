@@ -45,8 +45,6 @@ task('icon:cache', artisan('icons:cache'));
 
 task('deploy', [
     'deploy:prepare',
-    'deploy:lock',
-    'deploy:release',
     'deploy:secrets',       // Deploy secrets
     'deploy:vendors',
     'deploy:shared',
