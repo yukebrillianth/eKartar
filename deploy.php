@@ -37,10 +37,10 @@ set('composer_options', '--verbose --prefer-dist --no-progress --no-interaction 
 
 host('production')
     ->setHostname("nvdc1.duckdns.org")
-    ->set('remote_user', 'yukebrillianth')
+    ->set('remote_user', 'deployer')
     ->set('port', 64000)
     ->set('branch', 'main')
-    ->set('deploy_path', '~/ekartar');
+    ->set('deploy_path', '/var/www/html/ekartar');
 
 // Hooks
 
