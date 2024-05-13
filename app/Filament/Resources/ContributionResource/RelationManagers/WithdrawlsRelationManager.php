@@ -2,9 +2,10 @@
 
 namespace App\Filament\Resources\ContributionResource\RelationManagers;
 
-use App\Models\Contribution;
 use App\Models\House;
+use App\Models\Withdrawl;
 use Carbon\Carbon;
+use Closure;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
@@ -46,6 +47,15 @@ class WithdrawlsRelationManager extends RelationManager
                             $query;
                         }
                     })
+                    ->rules([
+                        fn (): Closure => function (string $attribute, $value, Closure $fail) {
+                            $alredyExist = Withdrawl::where('contribution_id', $this->getOwnerRecord()->id)
+                                ->where('house_id', $value)->count();
+                            if ($alredyExist) {
+                                $fail("Rumah sudah diperiksa");
+                            }
+                        },
+                    ])
                     ->getOptionLabelFromRecordUsing(fn (House $record) => "{$record->name} ({$record->holder})")
                     ->searchable()
                     ->preload()
@@ -143,6 +153,7 @@ class WithdrawlsRelationManager extends RelationManager
                         if ($this->getOwnerRecord()->is_calculation_complete) {
                             return !auth()->user()->roles[0] !== "karang_taruna" && count(auth()->user()->roles->toArray()) === 1;
                         }
+                        return true;
                     }),
                 Tables\Actions\DeleteAction::make(),
                 Tables\Actions\ForceDeleteAction::make(),
