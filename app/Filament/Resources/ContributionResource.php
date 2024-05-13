@@ -52,6 +52,9 @@ class ContributionResource extends Resource
                             ->disk('r2')
                             ->directory('contribution')
                             ->visibility('public')
+                            ->previewable()
+                            ->downloadable()
+                            ->openable()
                             ->visibleOn(['edit', 'view'])
                             ->label('Gambar Proses Penghitungan')
                             ->hidden(
