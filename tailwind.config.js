@@ -7,5 +7,6 @@ export default {
         "./resources/views/**/*.blade.php",
         "./resources/views/filament/admin/*.blade.php",
         "./vendor/filament/**/*.blade.php",
+        "./vendor/koalafacade/filament-alertbox/**/*.blade.php",
     ],
 };

@@ -13,6 +13,7 @@
         "filament/tables": "^3.2",
         "filament/widgets": "^3.2",
         "joshembling/image-optimizer": "^1.4",
+        "koalafacade/filament-alertbox": "^1.0",
         "laravel/framework": "^11.0",
         "laravel/horizon": "^5.24",
         "laravel/tinker": "^2.9",

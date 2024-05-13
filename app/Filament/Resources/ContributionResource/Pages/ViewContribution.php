@@ -4,6 +4,7 @@ namespace App\Filament\Resources\ContributionResource\Pages;
 
 use App\Exports\WithdrawlsExport;
 use App\Filament\Resources\ContributionResource;
+use App\Filament\Resources\ContributionResource\Widgets\ContributionAlertBox;
 use App\Filament\Resources\ContributionResource\Widgets\ContributionDetailOverview;
 use App\Models\Contribution;
 use Filament\Actions;
@@ -113,8 +114,15 @@ class ViewContribution extends ViewRecord
 
     protected function getHeaderWidgets(): array
     {
-        return [
-            ContributionDetailOverview::class,
-        ];
+        if ($this->getRecord()->trashed()) {
+            return [
+                ContributionAlertBox::class,
+                ContributionDetailOverview::class,
+            ];
+        } else {
+            return [
+                ContributionDetailOverview::class,
+            ];
+        }
     }
 }
