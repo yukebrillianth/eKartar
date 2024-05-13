@@ -10,7 +10,24 @@ services:
       POSTGRES_DB: nest
     networks:
       - eKartar
+      - app-tier
+  dev-cache:
+    image: bitnami/memcached:latest
+    ports:
+      - 11211:11211
+    networks:
+      - eKartar
+      - app-tier
+  dev-redis:
+    image: redis:latest
+    restart: always
+    ports:
+      - 6378:6379
+    volumes:
+      - cache:/data
 networks:
+  app-tier:
+    driver: bridge
   eKartar:
 volumes:
   cache:
