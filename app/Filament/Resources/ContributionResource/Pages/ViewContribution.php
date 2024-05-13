@@ -9,6 +9,10 @@ use App\Models\Contribution;
 use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Wizard\Step;
+use Filament\Forms\Get;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Enums\IconPosition;
 use Maatwebsite\Excel\Facades\Excel;
@@ -80,7 +84,24 @@ class ViewContribution extends ViewRecord
                     ->color('gray')
                     ->icon('heroicon-o-arrow-down-tray')
                     ->label('Export Jimpitan')
-                    ->action(fn () => Excel::download(new WithdrawlsExport($this->getRecord()->id), "eKartar-jimpitan-{$this->getRecord()->date}.xlsx")),
+                    ->modalSubmitActionLabel('Export sekarang')
+                    ->form([
+                        Select::make('encrypt')
+                            ->label('Enkripsi File')
+                            ->options([
+                                false => 'Tidak ada',
+                                true => 'Password'
+                            ])
+                            ->required()
+                            ->live(),
+                        TextInput::make('password')
+                            ->hidden(fn (Get $get): bool => !$get('encrypt'))
+                            ->required(fn (Get $get): bool => filled($get('encrypt')))
+                            ->label('Password')
+                            ->password()
+                            ->revealable()
+                    ])
+                    ->action(fn (array $data) => Excel::download(new WithdrawlsExport($this->getRecord()->id, $this->getRecord()->date, $data['encrypt'], $data['password'] ?? null), "eKartar-jimpitan-{$this->getRecord()->date}.xlsx")),
             ])->label('Lainnya')
                 ->icon('heroicon-m-ellipsis-vertical')
                 ->iconPosition(IconPosition::After)
