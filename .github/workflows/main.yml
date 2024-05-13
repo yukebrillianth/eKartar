@@ -46,7 +46,7 @@ jobs:
           php-version: '8.3'
           extension-csv: mbstring, bcmath
       - name: Setup Deployer
-        uses: atymic/deployer-php-action@main
+        uses: atymic/deployer-php-action@master
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
           ssh-known-hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
