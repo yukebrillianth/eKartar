@@ -50,7 +50,7 @@ set('use_nvm', function () {
 
 
 task('npm:build:prod', function () {
-    run('{{use_nvm}} && cd {{release_path}} && npm run prod');
+    run('{{use_nvm}} && cd {{release_path}} && npm run build');
 });
 
 desc('Build assets');
