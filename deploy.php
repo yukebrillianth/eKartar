@@ -48,6 +48,9 @@ set('use_nvm', function () {
     return '{{nvm}} && node --version && nvm use --lts --latest-npm';
 });
 
+task('npm:ci', function () {
+    run('{{use_nvm}} && cd {{release_path}} && npm ci');
+});
 
 task('npm:build:prod', function () {
     run('{{use_nvm}} && cd {{release_path}} && npm run build');
@@ -55,7 +58,7 @@ task('npm:build:prod', function () {
 
 desc('Build assets');
 task('deploy:build', [
-    'npm:install',
+    'npm:ci',
     'npm:build:prod'
 ]);
 
