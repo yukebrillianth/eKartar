@@ -4,6 +4,7 @@ namespace Deployer;
 
 require 'recipe/laravel.php';
 require 'contrib/npm.php';
+require 'contrib/cachetool.php';
 
 // Config
 
@@ -22,6 +23,7 @@ add('writable_dirs', []);
 set('composer_options', '--verbose --prefer-dist --no-progress --no-interaction --no-dev --optimize-autoloader');
 set('writable_mode', 'chmod');
 set('writable_chmod_mode', '0775');
+set('cachetool', '/var/run/php/php8.3-fpm.sock');
 
 // Hosts
 
@@ -92,4 +94,7 @@ after('deploy:failed', 'deploy:unlock');
 // before('deploy:symlink', 'artisan:migrate');
 after('deploy:cleanup', 'artisan:cache:clear');
 after('deploy:cleanup', 'artisan:optimize');
+
+// Clear OPcache
+after('deploy:symlink', 'cachetool:clear:opcache');
 // handle queue restarts
