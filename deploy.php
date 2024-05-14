@@ -13,14 +13,15 @@ set('bin/php', function () {
 set('application', 'eKartar');
 set('repository', 'https://github.com/yukebrillianth/eKartar.git');
 set('keep_releases', 5);
+set('ssh_multiplexing', true);
 
 add('shared_files', ['.env']);
 add('shared_dirs', ['storage']);
 add('writable_dirs', []);
 
 set('composer_options', '--verbose --prefer-dist --no-progress --no-interaction --no-dev --optimize-autoloader');
-set('writable_mode', 'chmod');
-set('writable_chmod_mode', '0775');
+// set('writable_mode', 'chmod');
+// set('writable_chmod_mode', '0775');
 
 // Hosts
 
