@@ -47,7 +47,7 @@ task('deploy:build', [
 task('db:migrate', artisan('migrate:install'));
 
 task('backup:run', artisan('backup:run'));
-task('backup:restore', artisan('backup:restore'));
+task('backup:restore', artisan('backup:restore', ['--disk=b2', '--connection=pgsql']));
 
 task('icon:cache', artisan('icons:cache'));
 
