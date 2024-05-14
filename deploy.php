@@ -44,6 +44,11 @@ task('deploy:build', [
     'npm:install',
 ]);
 
+task('db:migrate', artisan('migrate:install'));
+
+task('backup:run', artisan('backup:run'));
+task('backup:restore', artisan('backup:restore'));
+
 task('icon:cache', artisan('icons:cache'));
 
 task('deploy', [
