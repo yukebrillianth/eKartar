@@ -55,4 +55,4 @@ jobs:
       - name: Deploy to Production
         env:
           DOT_ENV: ${{ secrets.DOT_ENV_PRODUCTION }}
-        run: php vendor/bin/dep deploy production branch=main
+        run: php vendor/bin/dep deploy production branch=main -vvv

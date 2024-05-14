@@ -19,6 +19,8 @@ add('shared_dirs', ['storage']);
 add('writable_dirs', []);
 
 set('composer_options', '--verbose --prefer-dist --no-progress --no-interaction --no-dev --optimize-autoloader');
+set('writable_mode', 'chmod');
+set('writable_chmod_mode', '0775');
 
 // Hosts
 
