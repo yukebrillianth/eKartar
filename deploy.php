@@ -39,9 +39,24 @@ task('deploy:secrets', function () {
     upload('.env', get('deploy_path') . '/shared');
 });
 
+// NVM source location
+set('nvm', 'source $HOME/.nvm/nvm.sh');
+
+// Must be called in every run command related to npm
+// Note: do not separate run command, as it is accounted as different shell session
+set('use_nvm', function () {
+    return '{{nvm}} && node --version && nvm use --lts --latest-npm';
+});
+
+
+task('npm:build:prod', function () {
+    run('{{use_nvm}} && cd {{release_path}} && npm run prod');
+});
+
 desc('Build assets');
 task('deploy:build', [
     'npm:install',
+    'npm:build:prod'
 ]);
 
 task('db:migrate', artisan('migrate:install'));
