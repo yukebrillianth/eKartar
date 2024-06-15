@@ -30,7 +30,7 @@ set('cachetool', '/var/run/php/php8.3-fpm.sock');
 host('production')
     ->setHostname("node1.ekartar.my.id")
     ->set('remote_user', 'deployer')
-    ->set('port', 64000)
+    ->set('port', 22)
     ->set('branch', 'main')
     ->set('deploy_path', '/var/www/html/ekartar');
 
