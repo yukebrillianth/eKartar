@@ -2,10 +2,8 @@
 
 namespace App\Models;
 
-use App\Enums\TransactionAction;
 use App\Enums\TransactionType;
-use App\Jobs\ProcessTransaction;
-use Carbon\Carbon;
+use App\Traits\TransactionableTrait;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -19,7 +17,7 @@ use Illuminate\Support\Str;
 
 class Contribution extends Model
 {
-    use HasFactory, SoftDeletes, HasUuids;
+    use HasFactory, SoftDeletes, HasUuids, TransactionableTrait;
 
     /**
      * The attributes that are mass assignable.
@@ -92,7 +90,7 @@ class Contribution extends Model
                 $transaction->transactionable()->associate($this);
                 $transaction->save();
 
-                $this->updateBalance($transaction);
+                $this->updateBalance($transaction, value: $this->withdrawls()->sum('value'));
 
 
                 $this->update([
@@ -136,7 +134,7 @@ class Contribution extends Model
                 $originalValue = $transaction->balance->value;
 
                 // Update the balance by removing the original value
-                $this->updateBalance($transaction, $originalValue, true);
+                $this->updateBalance($transaction, $originalValue, isDelete: true);
 
                 $transaction->forceDelete();
 
@@ -180,48 +178,5 @@ class Contribution extends Model
     public function withdrawls(): HasMany
     {
         return $this->hasMany(Withdrawl::class);
-    }
-
-    protected function updateBalance(Transaction $transaction, int $originalValue = null, bool $isDelete = false): void
-    {
-        $currentBalance = Balance::latest()->lockForUpdate()->first();
-
-        if ($originalValue !== null) {
-            // Adjust the balance by removing the original value first if it's an edit or delete
-            switch ($transaction->type) {
-                case TransactionType::Contribution:
-                    $currentBalance->value -= $originalValue;
-                    break;
-                case TransactionType::Expense:
-                    $currentBalance->value += $originalValue;
-                    break;
-            }
-        }
-
-        if (!$isDelete) {
-            // Then update the balance with the new value if it's not a delete action
-            switch ($transaction->type) {
-                case TransactionType::Contribution:
-                    $newBalanceValue = ($currentBalance->value ?? 0) + $this->withdrawls()->sum('value');
-                    break;
-                case TransactionType::Expense:
-                    $newBalanceValue = ($currentBalance->value ?? 0) - $this->withdrawls()->sum('value');
-                    break;
-                default:
-                    throw new \InvalidArgumentException("Invalid transaction type!");
-            }
-
-            $balance = new Balance([
-                'value' => $newBalanceValue,
-                'date' => Carbon::now(),
-                'transaction_id' => $transaction->id
-            ]);
-            $balance->save();
-        } else {
-            // If it's a delete action, just update the balance without creating a new record
-            // Do permanent delete
-            $transaction->balance->forceDelete();
-            $currentBalance->save();
-        }
     }
 }
