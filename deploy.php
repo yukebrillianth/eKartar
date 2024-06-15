@@ -96,7 +96,7 @@ after('deploy:failed', 'deploy:unlock');
 after('deploy:cleanup', 'artisan:cache:clear');
 after('deploy:cleanup', 'artisan:optimize');
 
-// Clear OPcache
+// Clear php OPcache
 after('deploy:symlink', 'cachetool:clear:opcache');
 // handle queue restarts
 after('deploy:symlink', 'artisan:horizon');
