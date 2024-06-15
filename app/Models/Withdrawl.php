@@ -20,8 +20,18 @@ class Withdrawl extends Model
         'house_id',
         'contribution_id',
         'is_contribute',
+        'is_rapel',
         'value',
         'user_id',
+    ];
+
+    /**
+     * Cast
+     *
+     * @var array
+     */
+    protected $casts = [
+        'is_rapel' => 'boolean',
     ];
 
     public function contribution(): BelongsTo

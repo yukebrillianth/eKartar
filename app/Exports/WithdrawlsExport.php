@@ -2,6 +2,7 @@
 
 namespace App\Exports;
 
+use App\Models\Balance;
 use App\Models\Withdrawl;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\Exportable;
@@ -52,7 +53,7 @@ class WithdrawlsExport implements WithMapping, WithHeadings, WithStyles, ShouldA
         return [
             [
                 $withdrawl->house->name,
-                $withdrawl->is_contribute === true ? 'Mengisi' : 'Kosong',
+                $withdrawl->is_rapel ? 'Sudah Rapel' : ($withdrawl->is_contribute ? 'Mengisi' : 'Kosong'),
                 $withdrawl->value,
                 $withdrawl->user->name
             ],
@@ -66,24 +67,28 @@ class WithdrawlsExport implements WithMapping, WithHeadings, WithStyles, ShouldA
         $headers2 = ["eKartar 2024 © yukebrillianth.my.id"];
         $headers3 = [Carbon::parse($this->date)->isoFormat('dddd, D MMMM Y')];
         $headers4 = [
-            'Saldo',
-            $this->query()->sum('value')
+            'Total Saldo',
+            Balance::latest()->pluck('value')->first()
         ];
         $headers5 = [
+            'Perolehan',
+            $this->query()->sum('value')
+        ];
+        $headers6 = [
             'Rumah Terisi',
             $this->query()->where('is_contribute', true)->count()
         ];
-        $headers6 = [
+        $headers7 = [
             'Rumah Kosong',
             $this->query()->where('is_contribute', false)->count()
         ];
-        $headers7 = [
+        $headers8 = [
             'RUMAH',
             'STATUS',
             'JUMLAH',
             'DIPERIKSA OLEH',
         ];
-        return [$headers1, $headers2, $headers3, [""], $headers4, $headers5, $headers6, [""], $headers7];
+        return [$headers1, $headers2, $headers3, [""], $headers4, $headers5, $headers6, $headers7, [""], $headers8];
     }
 
     public function columnWidths(): array
@@ -108,7 +113,11 @@ class WithdrawlsExport implements WithMapping, WithHeadings, WithStyles, ShouldA
                     $greenStyle->getFill()->setFillType(Fill::FILL_SOLID)->getEndColor()->setARGB("FFC6EfCE");
                     $greenStyle->getFont()->getColor()->setARGB("FF006100");
 
-                    $cellRange = 'B10:B' . strval($count + 9);
+                    $yellowStyle = new Style(false, true);
+                    $yellowStyle->getFill()->setFillType(Fill::FILL_SOLID)->getEndColor()->setARGB("FFFFEB9C");
+                    $yellowStyle->getFont()->getColor()->setARGB("FF9C5700");
+
+                    $cellRange = 'B11:B' . strval($count + 10);
                     $conditionalStyles = [];
                     $wizardFactory = new Wizard($cellRange);
                     /** @var Wizard\CellValue $cellWizard */
@@ -118,6 +127,9 @@ class WithdrawlsExport implements WithMapping, WithHeadings, WithStyles, ShouldA
                     $conditionalStyles[] = $cellWizard->getConditional();
 
                     $cellWizard->equals('Mengisi')->setStyle($greenStyle);
+                    $conditionalStyles[] = $cellWizard->getConditional();
+
+                    $cellWizard->equals('Sudah Rapel')->setStyle($yellowStyle);
                     $conditionalStyles[] = $cellWizard->getConditional();
 
                     $event->sheet->getDelegate()->getStyle($cellWizard->getCellRange())->setConditionalStyles($conditionalStyles);
@@ -143,6 +155,7 @@ class WithdrawlsExport implements WithMapping, WithHeadings, WithStyles, ShouldA
         $sheet->getStyle('5')->getFont()->setBold(true);
         $sheet->getStyle('6')->getFont()->setBold(true);
         $sheet->getStyle('7')->getFont()->setBold(true);
+        $sheet->getStyle('8')->getFont()->setBold(true);
         $sheet->getStyle('2')->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
         $sheet->getStyle('2')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
         $sheet->getStyle('3')->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
@@ -157,10 +170,13 @@ class WithdrawlsExport implements WithMapping, WithHeadings, WithStyles, ShouldA
         $sheet->getStyle('8')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
         $sheet->getStyle('9')->getAlignment()->setHorizontal(Alignment::VERTICAL_CENTER);
         $sheet->getStyle('9')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $sheet->getStyle('10')->getAlignment()->setHorizontal(Alignment::VERTICAL_CENTER);
+        $sheet->getStyle('10')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
         $sheet->getStyle('B')->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
         $sheet->getStyle('B')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
         $sheet->getStyle('C2:C100')->getNumberFormat()->setFormatCode($accounting);
         $sheet->getStyle('B5')->getNumberFormat()->setFormatCode($accounting);
+        $sheet->getStyle('B6')->getNumberFormat()->setFormatCode($accounting);
         $sheet->mergeCells('A1:D1');
         $sheet->mergeCells('A2:D2');
         $sheet->mergeCells('A3:D3');

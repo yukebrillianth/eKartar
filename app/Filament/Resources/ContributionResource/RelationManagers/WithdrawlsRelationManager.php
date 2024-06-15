@@ -60,6 +60,10 @@ class WithdrawlsRelationManager extends RelationManager
                     ->searchable()
                     ->preload()
                     ->required(),
+                Forms\Components\Toggle::make('is_rapel')
+                    ->label('Sudah Merapel')
+                    ->default(false)
+                    ->inline(false),
                 Forms\Components\TextInput::make('value')
                     ->label('Jumlah')
                     // ->required()
@@ -107,12 +111,17 @@ class WithdrawlsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('is_contribute')
                     ->badge()
                     ->label('Status')
+                    ->getStateUsing(function (Model $record): string {
+
+                        return $record->is_rapel ? '2' : ($record->is_contribute ? '1' : '0');
+                    })
                     ->color(fn (string $state): string => match ($state) {
+                        '2' => 'warning',
                         '1' => 'success',
                         '0' => 'danger',
                         '' => 'danger',
                     })
-                    ->formatStateUsing(fn (string $state): string => $state === '1' ? 'Mengisi' : 'Kosong')
+                    ->formatStateUsing(fn (string $state): string => $state === '1' ? 'Mengisi' : ($state === '2' ? 'Sudah Rapel' : 'Kosong'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('value')
