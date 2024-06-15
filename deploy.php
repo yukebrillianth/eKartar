@@ -99,5 +99,5 @@ after('deploy:cleanup', 'artisan:optimize');
 // Clear php OPcache
 after('deploy:symlink', 'cachetool:clear:opcache');
 // handle queue restarts
-after('deploy:symlink', 'php artisan horizon:purge');
-after('deploy:symlink', 'php artisan queue:restart');
+after('deploy:symlink', 'horizon:purge');
+after('deploy:symlink', 'queue:restart');
