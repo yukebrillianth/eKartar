@@ -25,10 +25,39 @@ services:
       - 6378:6379
     volumes:
       - cache:/data
+  prod-db:
+    image: postgres:13
+    ports:
+      - 5436:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123
+      POSTGRES_DB: nest
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - eKartar
+      - app-tier
+  prod-cache:
+    image: bitnami/memcached:latest
+    ports:
+      - 11211:11211
+    networks:
+      - eKartar
+      - app-tier
+  prod-redis:
+    image: redis:latest
+    restart: always
+    ports:
+      - 6378:6379
+    volumes:
+      - redis:/data
 networks:
   app-tier:
     driver: bridge
   eKartar:
 volumes:
+  db_data:
+  redis:
   cache:
     driver: local
