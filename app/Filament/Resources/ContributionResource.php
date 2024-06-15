@@ -126,7 +126,13 @@ class ContributionResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->authorize(function (Contribution $record) {
+                        if (!$record->is_calculation_complete) {
+                            return auth()->user()->roles[0] !== "karang_taruna" && count(auth()->user()->roles->toArray()) === 1;
+                        }
+                        return false;
+                    }),
                 Tables\Actions\DeleteAction::make()
                     ->after(function (Contribution $record) {
                         if ($record->image_path) {
