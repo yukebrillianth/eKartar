@@ -43,9 +43,7 @@ jobs:
       - name: Setup SSH client for Cloudflare Tunnel
         uses: tichopad/setup-cloudflared-ssh-client@v1
         with:
-          hostname: node1.ekartar.my.id
-      - name: Connect to SSH server
-        run:  ssh -T deployer@node1.ekartar.my.id 'echo "Hello, world!"'
+          hostname: ${{ secrets.SSH_CF_HOSTNAME }}
       - name: Setup PHP
         uses: shivammathur/setup-php@main
         with:
