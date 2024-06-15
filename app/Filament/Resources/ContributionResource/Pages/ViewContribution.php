@@ -80,18 +80,18 @@ class ViewContribution extends ViewRecord
                     ->hidden(function (Contribution $record) {
                         return !$record->withdrawls->count() || !$record->is_calculation_complete;
                     }),
-                Action::make('Umumkan')
-                    ->icon('heroicon-o-paper-airplane')
-                    // ->button()
-                    ->color('info')
-                    ->hidden(function (Contribution $record) {
-                        return !$record->withdrawls->count() || $record->is_anounced ||  !$record->is_calculation_complete;
-                    })
-                    ->authorize(auth()->user()->roles[0]->name !== 'karang_taruna' && count(auth()->user()->roles->toArray()) === 1),
+                // Action::make('Umumkan')
+                //     ->icon('heroicon-o-paper-airplane')
+                //     // ->button()
+                //     ->color('info')
+                //     ->hidden(function (Contribution $record) {
+                //         return !$record->withdrawls->count() || $record->is_anounced ||  !$record->is_calculation_complete;
+                //     })
+                //     ->authorize(auth()->user()->roles[0]->name !== 'karang_taruna' && count(auth()->user()->roles->toArray()) === 1),
                 Action::make('export')
                     ->color('gray')
                     ->icon('heroicon-o-arrow-down-tray')
-                    ->label('Export Jimpitan')
+                    ->label('Export Excel')
                     ->modalSubmitActionLabel('Export sekarang')
                     ->form([
                         Select::make('encrypt')
