@@ -44,6 +44,8 @@ jobs:
         uses: tichopad/setup-cloudflared-ssh-client@v1
         with:
           hostname: ${{ secrets.SSH_CF_HOSTNAME }}
+      - name: Connect to SSH server
+        run:  ssh -T user@${{ secrets.SSH_CF_HOSTNAME }} 'echo "Hello, world!"'
       - name: Setup PHP
         uses: shivammathur/setup-php@main
         with:
