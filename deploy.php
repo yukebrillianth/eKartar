@@ -28,7 +28,7 @@ set('cachetool', '/var/run/php/php8.3-fpm.sock');
 // Hosts
 
 host('production')
-    ->setHostname("nvdc1.duckdns.org")
+    ->setHostname("node1.ekartar.my.id")
     ->set('remote_user', 'deployer')
     ->set('port', 64000)
     ->set('branch', 'main')
