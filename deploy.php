@@ -77,6 +77,7 @@ task('deploy', [
     'deploy:vendors',
     'deploy:shared',
     'deploy:build',
+    'artisan:horizon:terminate',
     'artisan:storage:link',
     'icon:cache',
     'artisan:view:cache',
