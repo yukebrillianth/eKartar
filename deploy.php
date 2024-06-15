@@ -77,6 +77,7 @@ task('deploy', [
     'deploy:vendors',
     'deploy:shared',
     'deploy:build',
+    'artisan:horizon:terminate',
     'artisan:storage:link',
     'icon:cache',
     'artisan:view:cache',
@@ -98,3 +99,4 @@ after('deploy:cleanup', 'artisan:optimize');
 // Clear OPcache
 after('deploy:symlink', 'cachetool:clear:opcache');
 // handle queue restarts
+after('deploy:symlink', 'artisan:horizon');
