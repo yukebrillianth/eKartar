@@ -128,7 +128,7 @@ class Contribution extends Model
                     ->first();
 
                 if (!$transaction) {
-                    throw new \Exception('Transaction not found.');
+                    throw new \Exception('Transaction not found.', 404);
                 }
 
                 $originalValue = $transaction->balance->value;
@@ -150,6 +150,13 @@ class Contribution extends Model
                     ->send();
             } catch (\Exception $e) {
                 DB::rollback();
+                if ($e->getCode() === 404) {
+                    Notification::make()
+                        ->title("Gagal membatalkan jimpitan " . $this->id)
+                        ->body('Transaksi gagal dibatalkan.')
+                        ->danger()
+                        ->send();
+                }
                 Notification::make()
                     ->title("Gagal membatalkan jimpitan " . $this->id)
                     ->body('Transaksi gagal dibatalkan.')
