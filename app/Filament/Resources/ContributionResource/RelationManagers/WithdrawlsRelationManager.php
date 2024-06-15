@@ -159,10 +159,10 @@ class WithdrawlsRelationManager extends RelationManager
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make()
                     ->authorize(function () {
-                        if ($this->getOwnerRecord()->is_calculation_complete) {
-                            return !auth()->user()->roles[0] !== "karang_taruna" && count(auth()->user()->roles->toArray()) === 1;
+                        if (!$this->getOwnerRecord()->is_calculation_complete) {
+                            return auth()->user()->roles[0] !== "karang_taruna" && count(auth()->user()->roles->toArray()) === 1;
                         }
-                        return true;
+                        return false;
                     }),
                 Tables\Actions\DeleteAction::make(),
                 Tables\Actions\ForceDeleteAction::make(),

@@ -27,7 +27,13 @@ class ViewContribution extends ViewRecord
         return [
             Actions\EditAction::make()
                 ->icon('heroicon-o-pencil-square')
-                ->label('Ubah data'),
+                ->label('Ubah data')
+                ->authorize(function () {
+                    if (!$this->record->is_calculation_complete) {
+                        return auth()->user()->roles[0] !== "karang_taruna" && count(auth()->user()->roles->toArray()) === 1;
+                    }
+                    return false;
+                }),
             ActionGroup::make([
                 Action::make('finish')
                     // ->label(function (Contribution $record) {
