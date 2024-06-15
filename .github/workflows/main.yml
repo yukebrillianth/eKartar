@@ -40,10 +40,6 @@ jobs:
         with:
           name: assets
           path: public
-      - name: Setup SSH client for Cloudflare Tunnel
-        uses: tichopad/setup-cloudflared-ssh-client@v1
-        with:
-          hostname: ${{ secrets.SSH_CF_HOSTNAME }}
       - name: Setup PHP
         uses: shivammathur/setup-php@main
         with:

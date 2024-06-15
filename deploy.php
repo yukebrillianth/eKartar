@@ -28,9 +28,9 @@ set('cachetool', '/var/run/php/php8.3-fpm.sock');
 // Hosts
 
 host('production')
-    ->setHostname("node1.ekartar.my.id")
+    ->setHostname("yukebrillianth-34394.portmap.host")
     ->set('remote_user', 'deployer')
-    ->set('port', 22)
+    ->set('port', 34394)
     ->set('branch', 'main')
     ->set('deploy_path', '/var/www/html/ekartar');
 
