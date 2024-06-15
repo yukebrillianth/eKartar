@@ -45,7 +45,7 @@ class ViewContribution extends ViewRecord
                     // })
                     ->icon('heroicon-o-check-badge')
                     // ->button()
-                    ->action(fn (Contribution $record) => $record->completeCalc())
+                    ->action(fn (Contribution $record) => $record->completeCalc(auth()->user()))
                     ->color('success')
                     ->hidden(function (Contribution $record) {
                         return !$record->withdrawls->count() || $record->is_calculation_complete;
@@ -69,7 +69,7 @@ class ViewContribution extends ViewRecord
                     // })
                     ->icon('heroicon-o-x-mark')
                     // ->button()
-                    ->action(fn (Contribution $record) => $record->cancelCalc())
+                    ->action(fn (Contribution $record) => $record->cancelCalc(auth()->user()))
                     ->color('danger')
                     ->hidden(function (Contribution $record) {
                         return !$record->withdrawls->count() || !$record->is_calculation_complete;

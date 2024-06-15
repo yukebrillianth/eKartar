@@ -23,8 +23,6 @@ class EditContribution extends EditRecord
 
     protected function mutateFormDataBeforeUpdate(array $data): array
     {
-        Log::channel('stderr')->debug(implode(' ', $data));
-
         return $data;
     }
 }

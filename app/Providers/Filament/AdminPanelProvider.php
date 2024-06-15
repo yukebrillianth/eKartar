@@ -7,6 +7,7 @@ use App\Filament\Resources\HouseResource\Widgets\HouseOverview;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages;
 use Filament\Pages\Auth\Login;
@@ -71,12 +72,16 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->navigationGroups([
-                'Data Warga',
-                'User Management'
+                'Transactions' => NavigationGroup::make(fn () => __('Transaksi')),
+                'User Management' => NavigationGroup::make(fn () => __('User Management')),
+                // 'Transaksi',
+                // 'Data Warga',
+                // 'User Management'
             ])
             ->login(Login::class)
             ->unsavedChangesAlerts()
             ->databaseNotifications()
+            ->databaseNotificationsPolling('5s')
             ->databaseTransactions();
     }
 }

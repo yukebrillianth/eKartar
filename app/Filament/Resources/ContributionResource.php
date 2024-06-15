@@ -31,6 +31,8 @@ class ContributionResource extends Resource
 
     protected static ?string $navigationLabel = 'Jimpitan';
 
+    protected static ?string $navigationGroup = 'Transactions';
+
     public static function form(Form $form): Form
     {
         return $form
@@ -138,7 +140,8 @@ class ContributionResource extends Resource
                     Tables\Actions\ForceDeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('date', 'desc');
     }
 
     public static function getRelations(): array
