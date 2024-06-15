@@ -150,20 +150,21 @@ class Contribution extends Model
                     ->send();
             } catch (\Exception $e) {
                 DB::rollback();
+                Log::error('Transaction processing failed: ' . $e->getMessage(), ['exception' => $e]);
                 if ($e->getCode() === 404) {
+                    Notification::make()
+                        ->title("Gagal membatalkan jimpitan " . $this->id)
+                        ->body($e->getMessage())
+                        ->danger()
+                        ->send();
+                } else {
                     Notification::make()
                         ->title("Gagal membatalkan jimpitan " . $this->id)
                         ->body('Transaksi gagal dibatalkan.')
                         ->danger()
                         ->send();
+                    throw $e;
                 }
-                Notification::make()
-                    ->title("Gagal membatalkan jimpitan " . $this->id)
-                    ->body('Transaksi gagal dibatalkan.')
-                    ->danger()
-                    ->send();
-                Log::error('Transaction processing failed: ' . $e->getMessage(), ['exception' => $e]);
-                throw $e;
             }
             // ProcessTransaction::dispatch($this, TransactionType::Contribution, TransactionAction::Delete, $this->withdrawls()->sum('value'), $user);
             // return $this->update([
