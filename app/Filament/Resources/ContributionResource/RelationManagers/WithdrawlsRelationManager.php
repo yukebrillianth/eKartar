@@ -47,15 +47,15 @@ class WithdrawlsRelationManager extends RelationManager
                             $query;
                         }
                     })
-                    ->rules([
-                        fn (): Closure => function (string $attribute, $value, Closure $fail) {
-                            $alredyExist = Withdrawl::where('contribution_id', $this->getOwnerRecord()->id)
-                                ->where('house_id', $value)->count();
-                            if ($alredyExist) {
-                                $fail("Rumah sudah diperiksa");
-                            }
-                        },
-                    ])
+                    // ->rules([
+                    //     fn (): Closure => function (string $attribute, $value, Closure $fail) {
+                    //         $alredyExist = Withdrawl::where('contribution_id', $this->getOwnerRecord()->id)
+                    //             ->where('house_id', $value)->count();
+                    //         if ($alredyExist) {
+                    //             $fail("Rumah sudah diperiksa");
+                    //         }
+                    //     },
+                    // ])
                     ->getOptionLabelFromRecordUsing(fn (House $record) => "{$record->name} ({$record->holder})")
                     ->searchable()
                     ->preload()
