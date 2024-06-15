@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ContributionResource\Widgets;
 
+use App\Models\Balance;
 use App\Models\House;
 use App\Models\Withdrawl;
 use Carbon\Carbon;
@@ -48,14 +49,38 @@ class ContributionOverview extends BaseWidget
         // Dapatkan tanggal akhir bulan ini
         $endDateMonthly = Carbon::now()->endOfMonth();
 
+        // Mendapatkan total perolehan tahun ini
+        $startDateYearly = Carbon::now()->startOfYear();
+        $endDateYearly = Carbon::now();
+
+        $totalYear = [];
+        $yearlyTotal = 0;
+
+        for ($month = 1; $month <= $endDateYearly->month; $month++) {
+            $startOfMonth = Carbon::create($endDateYearly->year, $month, 1)->startOfMonth();
+            $endOfMonth = Carbon::create($endDateYearly->year, $month, 1)->endOfMonth();
+
+            $monthlyContribution = Withdrawl::with('contribution')->whereHas('contribution', function ($query) use ($startOfMonth, $endOfMonth) {
+                $query->whereBetween('date', [$startOfMonth, $endOfMonth])->where('is_calculation_complete', true);
+            })->sum('value');
+
+            $totalYear[] = $monthlyContribution;
+            $yearlyTotal += $monthlyContribution;
+        }
+
         return [
-            Stat::make('Saldo Bulan Ini', 'Rp ' . number_format(Withdrawl::with('contribution')->whereHas('contribution', function ($query) use ($startDateMonthly, $endDateMonthly) {
-                $query->whereBetween('date', [$startDateMonthly, $endDateMonthly]);
+            Stat::make('Saldo Keseluruhan', 'Rp ' . number_format(Balance::latest()->pluck('value')->first(), 0, "", "."))
+                ->description('Saldo terkumpul'),
+            Stat::make('Perolehan Tahun Ini', 'Rp ' . number_format($yearlyTotal, 0, "", "."))
+                ->description('Saldo terkumpul')
+                ->chart($totalYear),
+            Stat::make('Perolehan Bulan Ini', 'Rp ' . number_format(Withdrawl::with('contribution')->whereHas('contribution', function ($query) use ($startDateMonthly, $endDateMonthly) {
+                $query->whereBetween('date', [$startDateMonthly, $endDateMonthly])->where('is_calculation_complete', true);
             })->sum('value'), 0, "", "."))
                 ->description('Saldo terkumpul')
                 ->chart($totalMonth),
-            Stat::make('Total Keluarga', House::where('is_active', true)->count())
-                ->description('Rumah Berpenghuni'),
+            // Stat::make('Total Keluarga', House::where('is_active', true)->count())
+            //     ->description('Rumah Berpenghuni'),
         ];
     }
 }
