@@ -79,7 +79,7 @@ class ExpenseResource extends Resource
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('value')
-                    ->label('Judul')
+                    ->label('Jumlah')
                     ->money('idr')
                     ->searchable()
                     ->sortable(),
