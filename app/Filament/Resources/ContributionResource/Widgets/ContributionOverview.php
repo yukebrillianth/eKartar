@@ -28,7 +28,7 @@ class ContributionOverview extends BaseWidget
             $endOfMonth = $startDate->copy()->endOfMonth(); // Akhir bulan
 
             $totalMonth[] = Withdrawl::with('contribution')->whereHas('contribution', function ($query) use ($startOfMonth, $endOfMonth) {
-                $query->whereBetween('date', [$startOfMonth, $endOfMonth]);
+                $query->whereBetween('date', [$startOfMonth, $endOfMonth])->where('is_calculation_complete', true);
             })->sum('value');
 
             $totalExpenseMonth[] = Expense::with('contribution')->whereBetween('date', [$startOfMonth, $endOfMonth])->sum('value');
@@ -45,7 +45,7 @@ class ContributionOverview extends BaseWidget
         $totalYear = [];
         $currentYear = Carbon::now()->year;
 
-        for ($year = $currentYear - 5; $year <= $currentYear; $year++) {
+        for ($year = $currentYear - 4; $year <= $currentYear; $year++) {
             $startOfYear = Carbon::create($year, 1, 1)->startOfYear();
             $endOfYear = Carbon::create($year, 12, 31)->endOfYear();
 
