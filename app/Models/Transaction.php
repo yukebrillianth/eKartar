@@ -25,6 +25,7 @@ class Transaction extends Model
         'title',
         'type',
         'expense_id',
+        'value',
         'contribution_id',
         'transactionable_id',
         'transactionable_type'

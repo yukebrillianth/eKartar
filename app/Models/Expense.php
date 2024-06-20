@@ -48,6 +48,7 @@ class Expense extends Model
             try {
                 $transaction = new Transaction();
                 $transaction->type = TransactionType::Credit;
+                $transaction->value = $model->value;
 
                 $transaction->title = "Pengeluaran " . $model->date;
 
@@ -79,6 +80,7 @@ class Expense extends Model
             try {
                 $transaction = new Transaction();
                 $transaction->type = TransactionType::Debit;
+                $transaction->value = $model->value;
 
                 $transaction->title = "Pembatalan Pengeluaran " . $model->date;
 

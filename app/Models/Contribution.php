@@ -84,6 +84,7 @@ class Contribution extends Model
             try {
                 $transaction = new Transaction();
                 $transaction->type = TransactionType::Debit;
+                $transaction->value = $this->withdrawls()->sum('value');
 
                 $transaction->title = "Penyelesaian Jimpitan " . $this->date;
 
@@ -128,6 +129,7 @@ class Contribution extends Model
             try {
                 $transaction = new Transaction();
                 $transaction->type = TransactionType::Credit;
+                $transaction->value = $this->withdrawls()->sum('value');
 
                 $transaction->title = "Pembatalan Jimpitan " . $this->date;
 

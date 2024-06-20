@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Resources\ContributionResource\Widgets\ContributionOverview;
+use App\Filament\Resources\TransactionResource\Widgets\LatestTransactions;
 use App\Filament\Resources\HouseResource\Widgets\HouseOverview;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -55,7 +56,8 @@ class AdminPanelProvider extends PanelProvider
                 Widgets\AccountWidget::class,
                 // Widgets\FilamentInfoWidget::class,
                 // HouseOverview::class,
-                ContributionOverview::class
+                ContributionOverview::class,
+                LatestTransactions::class
             ])
             ->middleware([
                 EncryptCookies::class,
