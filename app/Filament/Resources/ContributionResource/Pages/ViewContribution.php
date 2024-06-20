@@ -54,7 +54,7 @@ class ViewContribution extends ViewRecord
                     ->action(fn (Contribution $record) => $record->completeCalc(auth()->user()))
                     ->color('success')
                     ->hidden(function (Contribution $record) {
-                        return !$record->withdrawls->count() || $record->is_calculation_complete;
+                        return !$record->withdrawls->count() || !$record->image_path || $record->is_calculation_complete;
                     }),
                 // ->disabled(function (Contribution $record) {
                 //     return $record->is_calculation_complete;

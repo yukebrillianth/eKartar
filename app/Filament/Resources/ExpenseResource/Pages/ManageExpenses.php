@@ -17,7 +17,8 @@ class ManageExpenses extends ManageRecords
                 ->mutateFormDataUsing(function (array $data): array {
                     $data['user_id'] = auth()->id();
                     return $data;
-                }),
+                })
+                ->successNotification(null),
         ];
     }
 }

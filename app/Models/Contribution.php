@@ -76,67 +76,65 @@ class Contribution extends Model
         });
     }
 
-    // mark contribution as calculation complete
-    public function completeCalc(User $user)
+    // Mark contribution as calculation complete
+    public function completeCalc()
     {
         if (!$this->is_calculation_complete) {
             DB::beginTransaction();
             try {
                 $transaction = new Transaction();
-                $transaction->type = TransactionType::Contribution;
+                $transaction->type = TransactionType::Debit;
 
-                $transaction->title = "Jimpitan " . $this->date;
+                $transaction->title = "Penyelesaian Jimpitan " . $this->date;
 
                 $transaction->transactionable()->associate($this);
                 $transaction->save();
 
                 $this->updateBalance($transaction, value: $this->withdrawls()->sum('value'));
 
-
                 $this->update([
                     'is_calculation_complete' => true
                 ]);
+
                 DB::commit();
                 Notification::make()
-                    ->title("Berhasil menyelesaikan jimpitan " . $this->id)
+                    ->title("Berhasil menyelesaikan jimpitan " . $this->date)
                     ->body('Transaksi telah ditambahkan.')
                     ->success()
                     ->send();
             } catch (\Exception $e) {
                 DB::rollback();
                 Notification::make()
-                    ->title("Gagal menambahkan jimpitan " . $this->id)
+                    ->title("Gagal menambahkan jimpitan " . $this->date)
                     ->body('Transaksi gagal ditambahkan.')
                     ->danger()
                     ->send();
                 Log::error('Transaction processing failed: ' . $e->getMessage(), ['exception' => $e]);
-                throw $e;
             }
-            // ProcessTransaction::dispatch($this, TransactionType::Contribution, TransactionAction::Create, $this->withdrawls()->sum('value'), $user);
+        } else {
+            Notification::make()
+                ->title("Jimpitan Sudah Diselesaikan!")
+                ->body('Transaksi gagal ditambahkan.')
+                ->danger()
+                ->send();
         }
     }
 
-    // mark contribution as calculation complete
-    public function cancelCalc(User $user)
+    // Mark contribution as calculation complete
+    public function cancelCalc()
     {
         if ($this->is_calculation_complete) {
             DB::beginTransaction();
             try {
-                $transaction = Transaction::where('transactionable_type', get_class($this))
-                    ->where('transactionable_id', $this->id)
-                    ->with('balance')
-                    ->first();
+                $transaction = new Transaction();
+                $transaction->type = TransactionType::Credit;
 
-                if (!$transaction) {
-                    throw new \Exception('Transaction not found.', 404);
-                }
+                $transaction->title = "Pembatalan Jimpitan " . $this->date;
 
-                $originalValue = $transaction->balance->value;
+                $transaction->transactionable()->associate($this);
+                $transaction->save();
 
-                // Update the balance by removing the original value
-                $this->updateBalance($transaction, $originalValue, isDelete: true);
-
-                $transaction->forceDelete();
+                $this->updateBalance(transaction: $transaction, value: $this->withdrawls()->sum('value'));
 
                 $this->update([
                     'is_calculation_complete' => false
@@ -151,25 +149,12 @@ class Contribution extends Model
             } catch (\Exception $e) {
                 DB::rollback();
                 Log::error('Transaction processing failed: ' . $e->getMessage(), ['exception' => $e]);
-                if ($e->getCode() === 404) {
-                    Notification::make()
-                        ->title("Gagal membatalkan jimpitan " . $this->id)
-                        ->body($e->getMessage())
-                        ->danger()
-                        ->send();
-                } else {
-                    Notification::make()
-                        ->title("Gagal membatalkan jimpitan " . $this->id)
-                        ->body('Transaksi gagal dibatalkan.')
-                        ->danger()
-                        ->send();
-                    throw $e;
-                }
+                Notification::make()
+                    ->title("Gagal membatalkan jimpitan " . $this->id)
+                    ->body('Transaksi gagal dibatalkan.')
+                    ->danger()
+                    ->send();
             }
-            // ProcessTransaction::dispatch($this, TransactionType::Contribution, TransactionAction::Delete, $this->withdrawls()->sum('value'), $user);
-            // return $this->update([
-            //     'is_calculation_complete' => false
-            // ]);
         }
     }
 

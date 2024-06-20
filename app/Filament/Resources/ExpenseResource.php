@@ -53,6 +53,16 @@ class ExpenseResource extends Resource
                     ->label('Tanggal pengeluaran')
                     ->default(Carbon::today())
                     ->required(),
+                Forms\Components\FileUpload::make('image_path')
+                    ->image()
+                    ->disk('r2')
+                    ->directory('expense')
+                    ->visibility('public')
+                    ->previewable()
+                    ->downloadable()
+                    ->openable()
+                    ->required()
+                    ->label('Bukti Transaksi')
             ]);
     }
 
@@ -78,19 +88,16 @@ class ExpenseResource extends Resource
                     ->searchable(),
             ])
             ->filters([
-                Tables\Filters\TrashedFilter::make(),
+                //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                // Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\DeleteAction::make(),
-                Tables\Actions\ForceDeleteAction::make(),
-                Tables\Actions\RestoreAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
-                    Tables\Actions\RestoreBulkAction::make(),
                 ]),
             ]);
     }
@@ -100,13 +107,5 @@ class ExpenseResource extends Resource
         return [
             'index' => Pages\ManageExpenses::route('/'),
         ];
-    }
-
-    public static function getEloquentQuery(): Builder
-    {
-        return parent::getEloquentQuery()
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ]);
     }
 }
