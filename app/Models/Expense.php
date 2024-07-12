@@ -29,6 +29,7 @@ class Expense extends Model
         'date',
         'user_id',
         'image_path',
+        'ref_id'
     ];
 
     /**
@@ -50,7 +51,13 @@ class Expense extends Model
                 $transaction->type = TransactionType::Credit;
                 $transaction->value = $model->value;
 
-                $transaction->title = "Pengeluaran " . $model->date;
+                $model->ref_id = self::generateRefId();
+                if ($model->user->email === config('app.system_automation_email')) {
+                    $transaction->title = $model->title;
+                } else {
+                    $transaction->title = "Pengeluaran " . $model->ref_id;
+                }
+
 
                 $transaction->transactionable()->associate($model);
                 $transaction->save();
@@ -106,6 +113,17 @@ class Expense extends Model
                 throw $e;
             }
         });
+    }
+
+    public static function generateRefId()
+    {
+        $year = date('Y');
+        $month = date('m');
+        $count = self::whereYear('created_at', $year)
+            ->whereMonth('created_at', $month)
+            ->count() + 1;
+
+        return $year . $month . str_pad($count, 4, '0', STR_PAD_LEFT);
     }
 
     public function user(): BelongsTo
