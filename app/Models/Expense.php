@@ -44,6 +44,10 @@ class Expense extends Model
     {
         parent::boot();
 
+        static::creating(function (Model $model) {
+            $model->ref_id = self::generateRefId();
+        });
+
         static::created(function (Model $model) {
             DB::beginTransaction();
             try {
@@ -51,7 +55,6 @@ class Expense extends Model
                 $transaction->type = TransactionType::Credit;
                 $transaction->value = $model->value;
 
-                $model->ref_id = self::generateRefId();
                 if ($model->user->email === config('app.system_automation_email')) {
                     $transaction->title = $model->title;
                 } else {

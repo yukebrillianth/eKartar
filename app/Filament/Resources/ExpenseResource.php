@@ -74,6 +74,14 @@ class ExpenseResource extends Resource
                     ->label('Tanggal')
                     ->searchable()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('ref_id')
+                    ->label('Kode')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('date')
+                    ->label('Tanggal')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('title')
                     ->label('Judul')
                     ->searchable()
@@ -87,6 +95,7 @@ class ExpenseResource extends Resource
                     ->label('Dibuat oleh')
                     ->searchable(),
             ])
+            ->defaultSort('date', 'desc')
             ->filters([
                 //
             ])
