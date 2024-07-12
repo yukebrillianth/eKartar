@@ -123,4 +123,13 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /**
+     * System Automation
+     * 
+     * eKartar
+     */
+
+    'bank_charge_value' => env('BANK_CHARGE_VALUE', 10000),
+    'system_automation_email' => env('SYSTEM_AUTOMATION_EMAIL', 'system@ekartar.my.id'),
+
 ];
