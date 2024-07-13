@@ -62,7 +62,7 @@ class LatestTransactions extends BaseWidget
                     ->money('idr')
                     ->sortable(),
             ])
-            ->defaultSort('created_at', 'desc')
+            ->defaultSort('id', 'desc')
             ->filters([
                 Filter::make('created_at')
                     ->form([

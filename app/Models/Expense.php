@@ -9,9 +9,11 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class Expense extends Model
 {
@@ -40,6 +42,13 @@ class Expense extends Model
     protected $keyType = 'string';
     public $incrementing = false;
 
+    public static function booted()
+    {
+        static::creating(function ($model) {
+            $model->id = Str::uuid();
+        });
+    }
+
     protected static function boot()
     {
         parent::boot();
@@ -51,23 +60,26 @@ class Expense extends Model
         static::created(function (Model $model) {
             DB::beginTransaction();
             try {
+                // Buat transaksi baru
                 $transaction = new Transaction();
                 $transaction->type = TransactionType::Credit;
                 $transaction->value = $model->value;
 
+                // Simpan transaksi
                 if ($model->user->email === config('app.system_automation_email')) {
                     $transaction->title = $model->title;
                 } else {
                     $transaction->title = "Pengeluaran " . $model->ref_id;
                 }
-
-
                 $transaction->transactionable()->associate($model);
                 $transaction->save();
 
-                $model->updateBalance($transaction, value: $model->value);
+                // Buat catatan saldo baru
+                $model->updateBalance($transaction);
 
                 DB::commit();
+
+                // Kirim notifikasi sukses
                 Notification::make()
                     ->title("Berhasil menyelesaikan pengeluaran " . $model->date)
                     ->body('Transaksi telah ditambahkan.')
@@ -75,31 +87,37 @@ class Expense extends Model
                     ->send();
             } catch (\Exception $e) {
                 DB::rollback();
+
+                // Kirim notifikasi gagal
                 Notification::make()
                     ->title("Gagal menambahkan pengeluaran " . $model->date)
                     ->body('Transaksi gagal ditambahkan.')
                     ->danger()
                     ->send();
+
                 Log::error('Expense Transaction processing failed: ' . $e->getMessage(), ['exception' => $e]);
-                throw $e;
             }
         });
 
         static::deleted(function (Model $model) {
             DB::beginTransaction();
             try {
+                // Buat transaksi baru
                 $transaction = new Transaction();
                 $transaction->type = TransactionType::Debit;
                 $transaction->value = $model->value;
 
+                // Simpan transaksi
                 $transaction->title = "Pembatalan Pengeluaran " . $model->date;
-
                 $transaction->transactionable()->associate($model);
                 $transaction->save();
 
-                $model->updateBalance($transaction, value: $model->value);
+                // Buat catatan saldo baru
+                $model->updateBalance($transaction);
 
                 DB::commit();
+
+                // Kirim notifikasi sukses
                 Notification::make()
                     ->title("Berhasil menghapus pengeluaran " . $model->date)
                     ->body('Transaksi telah dihapus.')
@@ -107,13 +125,14 @@ class Expense extends Model
                     ->send();
             } catch (\Exception $e) {
                 DB::rollback();
+
+                // Kirim notifikasi gagal
                 Notification::make()
                     ->title("Gagal menghapus pengeluaran " . $model->date)
                     ->body('Transaksi gagal dihapus.')
                     ->danger()
                     ->send();
                 Log::error('Expense Transaction deletion failed: ' . $e->getMessage(), ['exception' => $e]);
-                throw $e;
             }
         });
     }
@@ -127,6 +146,11 @@ class Expense extends Model
             ->count() + 1;
 
         return $year . $month . str_pad($count, 4, '0', STR_PAD_LEFT);
+    }
+
+    public function transaction(): MorphOne
+    {
+        return $this->morphOne(Transaction::class, 'transactionable');
     }
 
     public function user(): BelongsTo

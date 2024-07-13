@@ -60,7 +60,7 @@ class ContributionOverview extends BaseWidget
         }
 
         return [
-            Stat::make('Saldo Keseluruhan', 'Rp ' . number_format(Balance::latest()->pluck('value')->first(), 0, "", "."))
+            Stat::make('Saldo Keseluruhan', 'Rp ' . number_format(Balance::orderBy('id', 'desc')->latest()->pluck('value')->first(), 0, "", "."))
                 ->description('Saldo terkumpul')
                 ->extraAttributes([
                     'class' => 'dark',

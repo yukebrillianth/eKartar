@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -82,22 +83,26 @@ class Contribution extends Model
         if (!$this->is_calculation_complete) {
             DB::beginTransaction();
             try {
+                // Buat transaksi baru
                 $transaction = new Transaction();
                 $transaction->type = TransactionType::Debit;
                 $transaction->value = $this->withdrawls()->sum('value');
-
                 $transaction->title = "Penyelesaian Jimpitan " . $this->date;
 
+                // Simpan transaksi
                 $transaction->transactionable()->associate($this);
                 $transaction->save();
 
-                $this->updateBalance($transaction, value: $this->withdrawls()->sum('value'));
+                // Buat catatan saldo baru
+                $this->updateBalance($transaction);
 
+                // Update status jimpitan
                 $this->update([
                     'is_calculation_complete' => true
                 ]);
 
                 DB::commit();
+                // Kirim notifikasi sukses
                 Notification::make()
                     ->title("Berhasil menyelesaikan jimpitan " . $this->date)
                     ->body('Transaksi telah ditambahkan.')
@@ -105,6 +110,8 @@ class Contribution extends Model
                     ->send();
             } catch (\Exception $e) {
                 DB::rollback();
+
+                // Kirim notifikasi gagal
                 Notification::make()
                     ->title("Gagal menambahkan jimpitan " . $this->date)
                     ->body('Transaksi gagal ditambahkan.')
@@ -127,22 +134,27 @@ class Contribution extends Model
         if ($this->is_calculation_complete) {
             DB::beginTransaction();
             try {
+                // Buat transaksi baru
                 $transaction = new Transaction();
                 $transaction->type = TransactionType::Credit;
                 $transaction->value = $this->withdrawls()->sum('value');
-
                 $transaction->title = "Pembatalan Jimpitan " . $this->date;
 
+                // Simpan transaksi
                 $transaction->transactionable()->associate($this);
                 $transaction->save();
 
-                $this->updateBalance(transaction: $transaction, value: $this->withdrawls()->sum('value'));
+                // Buat catatan saldo baru
+                $this->updateBalance(transaction: $transaction);
 
+                // Update status jimpitan
                 $this->update([
                     'is_calculation_complete' => false
                 ]);
 
                 DB::commit();
+
+                // Kirim notifikasi sukses
                 Notification::make()
                     ->title("Berhasil membatalkan jimpitan " . $this->id)
                     ->body('Transaksi telah dibatalkan.')
@@ -150,12 +162,14 @@ class Contribution extends Model
                     ->send();
             } catch (\Exception $e) {
                 DB::rollback();
-                Log::error('Transaction processing failed: ' . $e->getMessage(), ['exception' => $e]);
+
+                // Kirim notifikasi gagal
                 Notification::make()
                     ->title("Gagal membatalkan jimpitan " . $this->id)
                     ->body('Transaksi gagal dibatalkan.')
                     ->danger()
                     ->send();
+                Log::error('Transaction processing failed: ' . $e->getMessage(), ['exception' => $e]);
             }
         }
     }
@@ -173,5 +187,10 @@ class Contribution extends Model
     public function withdrawls(): HasMany
     {
         return $this->hasMany(Withdrawl::class);
+    }
+
+    public function transaction(): MorphOne
+    {
+        return $this->morphOne(Transaction::class, 'transactionable');
     }
 }
