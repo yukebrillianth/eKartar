@@ -85,7 +85,7 @@ class Expense extends Model
                     ->body('Transaksi telah ditambahkan.')
                     ->success()
                     ->send();
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 DB::rollback();
 
                 // Kirim notifikasi gagal
@@ -96,6 +96,8 @@ class Expense extends Model
                     ->send();
 
                 Log::error('Expense Transaction processing failed: ' . $e->getMessage(), ['exception' => $e]);
+                \Sentry\captureMessage('Transaction processing failed: ' . $e->getMessage());
+                \Sentry\captureException($e);
             }
         });
 
@@ -123,7 +125,7 @@ class Expense extends Model
                     ->body('Transaksi telah dihapus.')
                     ->success()
                     ->send();
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 DB::rollback();
 
                 // Kirim notifikasi gagal
@@ -133,6 +135,8 @@ class Expense extends Model
                     ->danger()
                     ->send();
                 Log::error('Expense Transaction deletion failed: ' . $e->getMessage(), ['exception' => $e]);
+                \Sentry\captureMessage('Transaction processing failed: ' . $e->getMessage());
+                \Sentry\captureException($e);
             }
         });
     }

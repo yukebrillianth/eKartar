@@ -108,7 +108,7 @@ class Contribution extends Model
                     ->body('Transaksi telah ditambahkan.')
                     ->success()
                     ->send();
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 DB::rollback();
 
                 // Kirim notifikasi gagal
@@ -118,6 +118,8 @@ class Contribution extends Model
                     ->danger()
                     ->send();
                 Log::error('Transaction processing failed: ' . $e->getMessage(), ['exception' => $e]);
+                \Sentry\captureMessage('Transaction processing failed: ' . $e->getMessage());
+                \Sentry\captureException($e);
             }
         } else {
             Notification::make()
@@ -160,7 +162,7 @@ class Contribution extends Model
                     ->body('Transaksi telah dibatalkan.')
                     ->success()
                     ->send();
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 DB::rollback();
 
                 // Kirim notifikasi gagal
@@ -170,6 +172,8 @@ class Contribution extends Model
                     ->danger()
                     ->send();
                 Log::error('Transaction processing failed: ' . $e->getMessage(), ['exception' => $e]);
+                \Sentry\captureMessage('Transaction processing failed: ' . $e->getMessage());
+                \Sentry\captureException($e);
             }
         }
     }
