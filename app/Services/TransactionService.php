@@ -40,7 +40,7 @@ class TransactionService
                 ->body('Berhasil menambahkan biaya admin bank senilai Rp. ' . $value)
                 ->success()
                 ->sendToDatabase($recipient);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             DB::rollback();
             Notification::make()
                 ->title('Biaya admin bank ' . Carbon::parse(now('Asia/Jakarta'))->locale("id_ID")->toDateString() . ' gagal!')
@@ -48,6 +48,8 @@ class TransactionService
                 ->danger()
                 ->sendToDatabase($recipient);
             Log::error('Cant create bank charge [Date]: ' . $date . " [Value]: " . $value . " [Message]: " . $e->getMessage(), ['exception' => $e]);
+            \Sentry\captureMessage('Transaction processing failed: ' . $e->getMessage());
+            \Sentry\captureException($e);
         }
     }
 }

@@ -21,6 +21,7 @@
         "maatwebsite/excel": "^3.1",
         "mailersend/laravel-driver": "^2.5",
         "predis/predis": "^2.0",
+        "sentry/sentry-laravel": "^4.7",
         "spatie/laravel-backup": "^8.8",
         "wnx/laravel-backup-restore": "^1.3"
     },
