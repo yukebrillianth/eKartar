@@ -9,4 +9,4 @@ Aplikasi ini ditujukan untuk karang taruna RT06 RW13 untuk mendukung program pen
 ## Fitur-Fitur
 
 -   [x] Penarikan
--   [ ] Export Excel
+-   [x] Export Excel
