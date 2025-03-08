@@ -23,7 +23,7 @@ jobs:
           npm install
           npm run build
       - name: Put built assets in Artifacts
-        uses: actions/upload-artifact
+        uses: actions/upload-artifact@v4
         with:
           name: assets
           path: public
